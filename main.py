@@ -12,6 +12,7 @@ DEFAULT_CONTENT = {
     "hero_title": "bloodedvr",
     "hero_tagline": "My VR-heavy corner of the internet with the games I play, my sites, updates, and more.",
     "status_badge": "ONLINE // VR PLAYER // BLOODEDVR",
+    "intro_note": "Usually playing something chaotic, testing new ideas, or making the site cooler.",
     "about": (
         "Hey, I'm bloodedvr. I like Animal Company, Roblox, Minecraft, VR games, and a lot more. "
         "This site is where I share what I play, what I make, and whatever cool stuff I'm into."
@@ -66,7 +67,16 @@ DEFAULT_CONTENT = {
         "VR gaming",
         "Creative design ideas",
     ],
-    "featured_video": "",
+    "featured_video": "https://www.youtube.com/",
+    "video_gallery": [
+        {"name": "Latest Video Drop", "url": "https://www.youtube.com/"},
+        {"name": "Gameplay Clip", "url": "https://www.tiktok.com/"},
+    ],
+    "image_gallery": [
+        {"name": "VR Setup", "url": "https://images.unsplash.com/photo-1593508512255-86ab42a8e620?auto=format&fit=crop&w=900&q=80"},
+        {"name": "Gaming Desk", "url": "https://images.unsplash.com/photo-1542751371-adc38448a05e?auto=format&fit=crop&w=900&q=80"},
+        {"name": "Late Night Build", "url": "https://images.unsplash.com/photo-1511512578047-dfb367046420?auto=format&fit=crop&w=900&q=80"},
+    ],
     "contact_email": "bloodedvr@example.com",
     "contact_discord": "bloodedvr",
     "contact_location": "Online",
@@ -128,6 +138,28 @@ def parse_websites(raw_text):
     return websites
 
 
+def parse_named_links(raw_text):
+    items = []
+    for line in raw_text.splitlines():
+        clean = line.strip()
+        if not clean:
+            continue
+        if "|" in clean:
+            name, url = clean.split("|", 1)
+            items.append({"name": name.strip(), "url": url.strip()})
+        else:
+            items.append({"name": clean, "url": clean})
+    return items
+
+
+def named_links_to_text(items):
+    return "\n".join(
+        f"{item.get('name', '').strip()} | {item.get('url', '').strip()}"
+        for item in items
+        if item.get("name") or item.get("url")
+    )
+
+
 def parse_posts(raw_text):
     posts = []
     for block in raw_text.strip().split("\n\n"):
@@ -161,6 +193,7 @@ def build_content_from_request(form):
         "hero_title": form.get("hero_title", "").strip(),
         "hero_tagline": form.get("hero_tagline", "").strip(),
         "status_badge": form.get("status_badge", "").strip(),
+        "intro_note": form.get("intro_note", "").strip(),
         "about": form.get("about", "").strip(),
         "games": parse_lines(form.get("games", "")),
         "websites": parse_websites(form.get("websites", "")),
@@ -171,6 +204,8 @@ def build_content_from_request(form):
         "projects": parse_lines(form.get("projects", "")),
         "skills": parse_lines(form.get("skills", "")),
         "featured_video": form.get("featured_video", "").strip(),
+        "video_gallery": parse_named_links(form.get("video_gallery", "")),
+        "image_gallery": parse_named_links(form.get("image_gallery", "")),
         "contact_email": form.get("contact_email", "").strip(),
         "contact_discord": form.get("contact_discord", "").strip(),
         "contact_location": form.get("contact_location", "").strip(),
@@ -197,6 +232,8 @@ def build_admin_context(content):
         "projects_text": "\n".join(content.get("projects", [])),
         "skills_text": "\n".join(content.get("skills", [])),
         "posts_text": posts_to_text(content.get("posts", [])),
+        "video_gallery_text": named_links_to_text(content.get("video_gallery", [])),
+        "image_gallery_text": named_links_to_text(content.get("image_gallery", [])),
     }
 
 

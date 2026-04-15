@@ -2,6 +2,7 @@
   "hero_title": "bloodedvr",
   "hero_tagline": "My VR-heavy corner of the internet with the games I play, my sites, updates, and more.",
   "status_badge": "ONLINE // VR PLAYER // BLOODEDVR",
+  "intro_note": "Usually playing something chaotic, testing new ideas, or making the site cooler.",
   "about": "Hey, I'm bloodedvr. I like Animal Company, Roblox, Minecraft, VR games, and a lot more. This site is where I share what I play, what I make, and whatever cool stuff I'm into.",
   "games": [
     "Animal Company",
@@ -62,7 +63,31 @@
     "VR gaming",
     "Creative design ideas"
   ],
-  "featured_video": "",
+  "featured_video": "https://www.youtube.com/",
+  "video_gallery": [
+    {
+      "name": "Latest Video Drop",
+      "url": "https://www.youtube.com/"
+    },
+    {
+      "name": "Gameplay Clip",
+      "url": "https://www.tiktok.com/"
+    }
+  ],
+  "image_gallery": [
+    {
+      "name": "VR Setup",
+      "url": "https://images.unsplash.com/photo-1593508512255-86ab42a8e620?auto=format&fit=crop&w=900&q=80"
+    },
+    {
+      "name": "Gaming Desk",
+      "url": "https://images.unsplash.com/photo-1542751371-adc38448a05e?auto=format&fit=crop&w=900&q=80"
+    },
+    {
+      "name": "Late Night Build",
+      "url": "https://images.unsplash.com/photo-1511512578047-dfb367046420?auto=format&fit=crop&w=900&q=80"
+    }
+  ],
   "contact_email": "bloodedvr@example.com",
   "contact_discord": "bloodedvr",
   "contact_location": "Online",

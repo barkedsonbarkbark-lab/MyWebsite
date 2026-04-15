@@ -22,27 +22,61 @@
       {% endif %}
     {% endwith %}
 
+    <div class="action-bar">
+      <button type="button" class="action-button" data-target="hero_title">Update Site Content</button>
+      <button type="button" class="action-button" data-target="announcements" data-mode="announce">Send Announcement</button>
+      <button type="button" class="action-button" data-target="posts" data-mode="post">Make Post</button>
+      <button type="button" class="action-button" data-target="video_gallery" data-mode="video">Share Video</button>
+      <button type="button" class="action-button" data-target="image_gallery" data-mode="image">Share Image</button>
+      <button type="button" class="action-button" data-target="custom_html">Edit Website HTML</button>
+      <button type="button" class="action-button" id="refresh-preview">Refresh Preview</button>
+    </div>
+
+    <div class="quick-panel">
+      <div class="quick-box">
+        <div class="section-label">QUICK ANNOUNCEMENT</div>
+        <label for="quick_announcement">Write a fast broadcast</label>
+        <input id="quick_announcement" type="text" placeholder="New update is live...">
+        <button type="button" class="ghost-button quick-trigger" data-mode="announce">ADD TO ANNOUNCEMENTS</button>
+      </div>
+      <div class="quick-box">
+        <div class="section-label">QUICK VIDEO</div>
+        <label for="quick_video">Format: Title | https://video-link</label>
+        <input id="quick_video" type="text" placeholder="Fresh clip | https://youtube.com/...">
+        <button type="button" class="ghost-button quick-trigger" data-mode="video">ADD TO VIDEO LIST</button>
+      </div>
+      <div class="quick-box">
+        <div class="section-label">QUICK IMAGE</div>
+        <label for="quick_image">Format: Title | https://image-link</label>
+        <input id="quick_image" type="text" placeholder="Setup photo | https://image...">
+        <button type="button" class="ghost-button quick-trigger" data-mode="image">ADD TO IMAGE LIST</button>
+      </div>
+    </div>
+
     <div class="function-grid">
       <div class="function-chip">1 Hero Title</div>
       <div class="function-chip">2 Hero Tagline</div>
       <div class="function-chip">3 Status Badge</div>
-      <div class="function-chip">4 About</div>
-      <div class="function-chip">5 Games</div>
-      <div class="function-chip">6 Websites</div>
-      <div class="function-chip">7 More Stuff</div>
-      <div class="function-chip">8 Announcements</div>
-      <div class="function-chip">9 Posts</div>
-      <div class="function-chip">10 Timeline</div>
-      <div class="function-chip">11 Projects</div>
-      <div class="function-chip">12 Skills</div>
-      <div class="function-chip">13 Featured Video</div>
-      <div class="function-chip">14 Email</div>
-      <div class="function-chip">15 Discord</div>
-      <div class="function-chip">16 Location</div>
-      <div class="function-chip">17 Footer Note</div>
-      <div class="function-chip">18 Button Label</div>
-      <div class="function-chip">19 Button URL</div>
-      <div class="function-chip">20 Custom HTML/CSS</div>
+      <div class="function-chip">4 Intro Note</div>
+      <div class="function-chip">5 About</div>
+      <div class="function-chip">6 Games</div>
+      <div class="function-chip">7 Websites</div>
+      <div class="function-chip">8 More Stuff</div>
+      <div class="function-chip">9 Announcements</div>
+      <div class="function-chip">10 Posts</div>
+      <div class="function-chip">11 Timeline</div>
+      <div class="function-chip">12 Projects</div>
+      <div class="function-chip">13 Skills</div>
+      <div class="function-chip">14 Featured Video</div>
+      <div class="function-chip">15 Video Gallery</div>
+      <div class="function-chip">16 Image Gallery</div>
+      <div class="function-chip">17 Email</div>
+      <div class="function-chip">18 Discord</div>
+      <div class="function-chip">19 Location</div>
+      <div class="function-chip">20 Footer Note</div>
+      <div class="function-chip">21 Button Label</div>
+      <div class="function-chip">22 Button URL</div>
+      <div class="function-chip">23 Custom HTML/CSS</div>
     </div>
 
     <div class="admin-dashboard">
@@ -59,6 +93,9 @@
 
             <label for="status_badge">Status badge</label>
             <input id="status_badge" name="status_badge" value="{{ content.status_badge }}">
+
+            <label for="intro_note">Intro note</label>
+            <input id="intro_note" name="intro_note" value="{{ content.intro_note }}">
 
             <label for="about">About text</label>
             <textarea id="about" name="about" rows="5" required>{{ content.about }}</textarea>
@@ -110,6 +147,16 @@
             <label for="featured_video">Featured video URL</label>
             <input id="featured_video" name="featured_video" value="{{ content.featured_video }}">
 
+            <label for="video_gallery">Video gallery
+              <span class="field-help">Use: Title | https://video-link</span>
+            </label>
+            <textarea id="video_gallery" name="video_gallery" rows="6">{{ video_gallery_text }}</textarea>
+
+            <label for="image_gallery">Image gallery
+              <span class="field-help">Use: Title | https://image-link</span>
+            </label>
+            <textarea id="image_gallery" name="image_gallery" rows="6">{{ image_gallery_text }}</textarea>
+
             <label for="contact_email">Contact email</label>
             <input id="contact_email" name="contact_email" value="{{ content.contact_email }}">
 
@@ -158,6 +205,10 @@
   const editorForm = document.getElementById("editor-form");
   const saveStatus = document.getElementById("save-status");
   const previewFrame = document.getElementById("live-preview");
+  const announcementsField = document.getElementById("announcements");
+  const postsField = document.getElementById("posts");
+  const videoField = document.getElementById("video_gallery");
+  const imageField = document.getElementById("image_gallery");
   let saveTimer;
 
   async function saveLive() {
@@ -176,6 +227,22 @@
     previewFrame.src = "{{ url_for('home') }}?t=" + Date.now();
   }
 
+  function prependLine(field, value) {
+    if (!value.trim()) return;
+    field.value = field.value.trim()
+      ? value.trim() + "\n" + field.value.trim()
+      : value.trim();
+    field.dispatchEvent(new Event("input", { bubbles: true }));
+  }
+
+  function prependBlock(field, value) {
+    if (!value.trim()) return;
+    field.value = field.value.trim()
+      ? value.trim() + "\n\n" + field.value.trim()
+      : value.trim();
+    field.dispatchEvent(new Event("input", { bubbles: true }));
+  }
+
   editorForm.addEventListener("input", () => {
     saveStatus.textContent = "Changes detected. Auto-save in 1 second...";
     clearTimeout(saveTimer);
@@ -186,6 +253,62 @@
     event.preventDefault();
     clearTimeout(saveTimer);
     await saveLive();
+  });
+
+  document.querySelectorAll(".action-button").forEach((button) => {
+    button.addEventListener("click", () => {
+      const targetId = button.dataset.target;
+      const mode = button.dataset.mode;
+
+      if (mode === "announce") {
+        document.getElementById("quick_announcement").focus();
+        return;
+      }
+
+      if (mode === "video") {
+        document.getElementById("quick_video").focus();
+        return;
+      }
+
+      if (mode === "image") {
+        document.getElementById("quick_image").focus();
+        return;
+      }
+
+      const target = document.getElementById(targetId);
+      if (target) {
+        target.scrollIntoView({ behavior: "smooth", block: "center" });
+        target.focus();
+      }
+    });
+  });
+
+  document.getElementById("refresh-preview").addEventListener("click", () => {
+    previewFrame.src = "{{ url_for('home') }}?t=" + Date.now();
+  });
+
+  document.querySelectorAll(".quick-trigger").forEach((button) => {
+    button.addEventListener("click", () => {
+      const mode = button.dataset.mode;
+
+      if (mode === "announce") {
+        const value = document.getElementById("quick_announcement").value;
+        prependLine(announcementsField, value);
+        document.getElementById("quick_announcement").value = "";
+      }
+
+      if (mode === "video") {
+        const value = document.getElementById("quick_video").value;
+        prependLine(videoField, value);
+        document.getElementById("quick_video").value = "";
+      }
+
+      if (mode === "image") {
+        const value = document.getElementById("quick_image").value;
+        prependLine(imageField, value);
+        document.getElementById("quick_image").value = "";
+      }
+    });
   });
 </script>
 {% endblock %}

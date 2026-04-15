@@ -5,10 +5,23 @@
   <section class="terminal-card hero-card">
     <div class="version-line">PROFILE LINK v1.0.8000</div>
     <div class="status-chip">{{ content.status_badge }}</div>
-    <div class="brand-frame">
-      <div class="brand-title">{{ content.hero_title }}</div>
+    <div class="hero-layout">
+      <div>
+        <div class="brand-frame">
+          <div class="brand-title">{{ content.hero_title }}</div>
+        </div>
+        <p class="hero-tagline">{{ content.hero_tagline }}</p>
+      </div>
+      <aside class="hero-note-card">
+        <div class="section-label">LIVE NOTE</div>
+        <p>{{ content.intro_note }}</p>
+        <div class="mini-stats">
+          <div><strong>{{ content.games|length }}</strong><span>games</span></div>
+          <div><strong>{{ content.posts|length }}</strong><span>posts</span></div>
+          <div><strong>{{ content.projects|length }}</strong><span>projects</span></div>
+        </div>
+      </aside>
     </div>
-    <p class="hero-tagline">{{ content.hero_tagline }}</p>
     <div class="hero-actions">
       <a href="{{ content.primary_button_url or '#links' }}" class="admin-link">{{ content.primary_button_label }}</a>
       <div class="code-row">
@@ -120,9 +133,53 @@
     </article>
   </section>
 
+  {% if content.video_gallery or content.featured_video %}
+    <section class="terminal-card section-card full-span">
+      <div class="section-label">09 / VIDEO SHARE</div>
+      <h2>Clips And Videos</h2>
+      <div class="media-grid">
+        {% if content.featured_video %}
+          <article class="media-feature">
+            <div class="media-screen"></div>
+            <div class="post-meta">Featured Link</div>
+            <h3>Main Video</h3>
+            <p>Drop your newest video, clip, or channel here so people can jump to it fast.</p>
+            <a href="{{ content.featured_video }}" target="_blank" rel="noreferrer" class="terminal-link compact-link">
+              <span>Open Featured Video</span>
+              <span class="link-arrow">WATCH</span>
+            </a>
+          </article>
+        {% endif %}
+        <div class="media-list">
+          {% for video in content.video_gallery %}
+            <a href="{{ video.url }}" target="_blank" rel="noreferrer" class="terminal-link">
+              <span>{{ video.name }}</span>
+              <span class="link-arrow">PLAY</span>
+            </a>
+          {% endfor %}
+        </div>
+      </div>
+    </section>
+  {% endif %}
+
+  {% if content.image_gallery %}
+    <section class="terminal-card section-card full-span">
+      <div class="section-label">10 / IMAGE SHARE</div>
+      <h2>Shots From My World</h2>
+      <div class="image-grid">
+        {% for image in content.image_gallery %}
+          <figure class="image-card">
+            <img src="{{ image.url }}" alt="{{ image.name }}">
+            <figcaption>{{ image.name }}</figcaption>
+          </figure>
+        {% endfor %}
+      </div>
+    </section>
+  {% endif %}
+
   {% if content.posts %}
     <section class="terminal-card section-card full-span">
-      <div class="section-label">09 / POSTS</div>
+      <div class="section-label">11 / POSTS</div>
       <h2>Latest Posts</h2>
       <div class="post-grid">
         {% for post in content.posts %}
@@ -138,7 +195,7 @@
 
   {% if content.custom_html %}
     <section class="terminal-card section-card full-span">
-      <div class="section-label">10 / CUSTOM HTML</div>
+      <div class="section-label">12 / CUSTOM HTML</div>
       <h2>Extra Section</h2>
       <div class="custom-html-slot">{{ content.custom_html|safe }}</div>
     </section>
