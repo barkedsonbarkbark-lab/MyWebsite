@@ -95,7 +95,10 @@ def ensure_content_file():
 def load_content():
     ensure_content_file()
     try:
-        return json.loads(CONTENT_FILE.read_text(encoding="utf-8"))
+        raw_content = json.loads(CONTENT_FILE.read_text(encoding="utf-8"))
+        merged = DEFAULT_CONTENT.copy()
+        merged.update(raw_content)
+        return merged
     except json.JSONDecodeError:
         CONTENT_FILE.write_text(json.dumps(DEFAULT_CONTENT, indent=2), encoding="utf-8")
         return DEFAULT_CONTENT

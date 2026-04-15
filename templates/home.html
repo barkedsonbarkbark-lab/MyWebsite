@@ -4,18 +4,34 @@
 <main class="page-shell">
   <section class="terminal-card hero-card">
     <div class="version-line">PROFILE LINK v1.0.8000</div>
+    <div class="status-chip">{{ content.status_badge }}</div>
     <div class="brand-frame">
       <div class="brand-title">{{ content.hero_title }}</div>
     </div>
     <p class="hero-tagline">{{ content.hero_tagline }}</p>
-    <div class="code-row">
-      <span class="code-box">M</span>
-      <span class="code-box">A</span>
-      <span class="code-box">K</span>
-      <span class="code-box">S</span>
-      <span class="code-box">!</span>
+    <div class="hero-actions">
+      <a href="{{ content.primary_button_url or '#links' }}" class="admin-link">{{ content.primary_button_label }}</a>
+      <div class="code-row">
+        <span class="code-box">M</span>
+        <span class="code-box">A</span>
+        <span class="code-box">K</span>
+        <span class="code-box">S</span>
+        <span class="code-box">!</span>
+      </div>
     </div>
   </section>
+
+  {% if content.announcements %}
+    <section class="terminal-card section-card full-span">
+      <div class="section-label">00 / ANNOUNCEMENTS</div>
+      <h2>Broadcast Feed</h2>
+      <div class="announcement-stack">
+        {% for item in content.announcements %}
+          <div class="announcement-item">{{ item }}</div>
+        {% endfor %}
+      </div>
+    </section>
+  {% endif %}
 
   <section class="grid-layout">
     <article class="terminal-card section-card">
@@ -34,7 +50,7 @@
       </ul>
     </article>
 
-    <article class="terminal-card section-card">
+    <article class="terminal-card section-card" id="links">
       <div class="section-label">03 / MY WEBSITES</div>
       <h2>Links</h2>
       <div class="link-stack">
@@ -56,10 +72,81 @@
         {% endfor %}
       </ul>
     </article>
+
+    <article class="terminal-card section-card">
+      <div class="section-label">05 / PROJECTS</div>
+      <h2>Current Builds</h2>
+      <ul class="terminal-list">
+        {% for item in content.projects %}
+          <li>{{ item }}</li>
+        {% endfor %}
+      </ul>
+    </article>
+
+    <article class="terminal-card section-card">
+      <div class="section-label">06 / SKILLS</div>
+      <h2>Things I Use</h2>
+      <div class="chip-row">
+        {% for item in content.skills %}
+          <span class="skill-chip">{{ item }}</span>
+        {% endfor %}
+      </div>
+    </article>
+
+    <article class="terminal-card section-card">
+      <div class="section-label">07 / TIMELINE</div>
+      <h2>Progress Log</h2>
+      <ol class="timeline-list">
+        {% for item in content.timeline %}
+          <li>{{ item }}</li>
+        {% endfor %}
+      </ol>
+    </article>
+
+    <article class="terminal-card section-card">
+      <div class="section-label">08 / CONTACT</div>
+      <h2>Reach Me</h2>
+      <div class="contact-stack">
+        <div><strong>Email:</strong> {{ content.contact_email }}</div>
+        <div><strong>Discord:</strong> {{ content.contact_discord }}</div>
+        <div><strong>Location:</strong> {{ content.contact_location }}</div>
+      </div>
+      {% if content.featured_video %}
+        <a href="{{ content.featured_video }}" target="_blank" rel="noreferrer" class="terminal-link compact-link">
+          <span>Featured Video</span>
+          <span class="link-arrow">WATCH</span>
+        </a>
+      {% endif %}
+    </article>
   </section>
+
+  {% if content.posts %}
+    <section class="terminal-card section-card full-span">
+      <div class="section-label">09 / POSTS</div>
+      <h2>Latest Posts</h2>
+      <div class="post-grid">
+        {% for post in content.posts %}
+          <article class="post-card">
+            <div class="post-meta">{{ post.meta }}</div>
+            <h3>{{ post.title }}</h3>
+            <p>{{ post.body }}</p>
+          </article>
+        {% endfor %}
+      </div>
+    </section>
+  {% endif %}
+
+  {% if content.custom_html %}
+    <section class="terminal-card section-card full-span">
+      <div class="section-label">10 / CUSTOM HTML</div>
+      <h2>Extra Section</h2>
+      <div class="custom-html-slot">{{ content.custom_html|safe }}</div>
+    </section>
+  {% endif %}
 
   <div class="footer-strip">
     <a href="{{ url_for('admin_login') }}" class="admin-link">ADMIN LOGIN</a>
   </div>
+  <p class="footer-note">{{ content.footer_note }}</p>
 </main>
 {% endblock %}

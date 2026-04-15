@@ -136,6 +136,23 @@ label,
   margin: 24px 0 22px;
 }
 
+.status-chip {
+  display: inline-flex;
+  margin-bottom: 16px;
+  padding: 8px 12px;
+  border: 1px solid var(--line);
+  background: rgba(84, 255, 157, 0.08);
+  font-family: "Share Tech Mono", monospace;
+  color: var(--accent);
+}
+
+.hero-actions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 16px;
+  align-items: center;
+}
+
 .code-row {
   display: flex;
   gap: 12px;
@@ -156,6 +173,10 @@ label,
   display: grid;
   grid-template-columns: repeat(2, minmax(0, 1fr));
   gap: 22px;
+}
+
+.full-span {
+  margin-bottom: 22px;
 }
 
 .section-card,
@@ -199,6 +220,18 @@ textarea {
   gap: 12px;
 }
 
+.announcement-stack,
+.contact-stack {
+  display: grid;
+  gap: 10px;
+}
+
+.announcement-item {
+  padding: 12px 14px;
+  border-left: 3px solid var(--line-strong);
+  background: rgba(84, 255, 157, 0.05);
+}
+
 .terminal-link {
   display: flex;
   justify-content: space-between;
@@ -223,10 +256,72 @@ textarea {
   font-size: 0.95rem;
 }
 
+.compact-link {
+  margin-top: 16px;
+}
+
+.chip-row {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 10px;
+}
+
+.skill-chip {
+  display: inline-flex;
+  padding: 8px 12px;
+  border: 1px solid var(--line);
+  background: rgba(84, 255, 157, 0.05);
+  font-family: "Share Tech Mono", monospace;
+  color: var(--muted);
+}
+
+.timeline-list {
+  margin: 0;
+  padding-left: 22px;
+  color: var(--muted);
+}
+
+.timeline-list li + li {
+  margin-top: 10px;
+}
+
+.post-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
+  gap: 16px;
+}
+
+.post-card {
+  padding: 18px;
+  border: 1px solid var(--line);
+  background: rgba(84, 255, 157, 0.04);
+}
+
+.post-card h3 {
+  margin: 8px 0 10px;
+}
+
+.post-meta,
+.footer-note,
+.save-status {
+  color: var(--muted);
+  font-family: "Share Tech Mono", monospace;
+}
+
+.custom-html-slot {
+  color: var(--text);
+}
+
 .footer-strip {
   display: flex;
   justify-content: center;
   padding-top: 22px;
+}
+
+.footer-note {
+  text-align: center;
+  margin-top: 16px;
+  font-size: 0.9rem;
 }
 
 .admin-link,
@@ -259,7 +354,7 @@ button:hover {
 }
 
 .wide-card {
-  max-width: 980px;
+  max-width: 1300px;
   margin: 0 auto;
 }
 
@@ -271,6 +366,66 @@ button:hover {
 
 .grid-form {
   grid-template-columns: 1fr;
+}
+
+.function-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(145px, 1fr));
+  gap: 10px;
+  margin: 18px 0 24px;
+}
+
+.function-chip {
+  padding: 10px 12px;
+  border: 1px solid var(--line);
+  background: rgba(84, 255, 157, 0.04);
+  font-family: "Share Tech Mono", monospace;
+  color: var(--muted);
+}
+
+.admin-dashboard {
+  display: grid;
+  grid-template-columns: minmax(0, 1.2fr) minmax(320px, 0.8fr);
+  gap: 20px;
+  align-items: start;
+}
+
+.form-columns {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 18px;
+}
+
+.editor-section {
+  display: grid;
+  gap: 12px;
+  border: 1px solid rgba(84, 255, 157, 0.14);
+  padding: 16px;
+  background: rgba(84, 255, 157, 0.025);
+}
+
+.preview-panel {
+  position: sticky;
+  top: 20px;
+  padding: 18px;
+  border: 1px solid var(--line);
+  background: rgba(84, 255, 157, 0.04);
+}
+
+.preview-panel iframe {
+  width: 100%;
+  min-height: 860px;
+  border: 1px solid var(--line);
+  background: #03140a;
+}
+
+.save-bar {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: space-between;
+  align-items: center;
+  gap: 12px;
+  margin-top: 18px;
 }
 
 label {
@@ -332,6 +487,11 @@ textarea:focus {
     grid-template-columns: 1fr;
   }
 
+  .admin-dashboard,
+  .form-columns {
+    grid-template-columns: 1fr;
+  }
+
   .hero-card,
   .section-card,
   .admin-card {
@@ -346,5 +506,9 @@ textarea:focus {
     width: 52px;
     height: 52px;
     font-size: 1.5rem;
+  }
+
+  .preview-panel {
+    position: static;
   }
 }

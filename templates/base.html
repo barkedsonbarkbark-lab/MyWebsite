@@ -8,6 +8,9 @@
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Share+Tech+Mono&family=Space+Grotesk:wght@400;500;700&display=swap" rel="stylesheet">
   <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+  {% if content and content.custom_css %}
+    <style>{{ content.custom_css|safe }}</style>
+  {% endif %}
 </head>
 <body>
   <div class="screen-glow"></div>
