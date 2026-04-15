@@ -1,0 +1,65 @@
+{% extends "base.html" %}
+{% set title = content.hero_title %}
+{% block body %}
+<main class="page-shell">
+  <section class="terminal-card hero-card">
+    <div class="version-line">PROFILE LINK v1.0.8000</div>
+    <div class="brand-frame">
+      <div class="brand-title">{{ content.hero_title }}</div>
+    </div>
+    <p class="hero-tagline">{{ content.hero_tagline }}</p>
+    <div class="code-row">
+      <span class="code-box">M</span>
+      <span class="code-box">A</span>
+      <span class="code-box">K</span>
+      <span class="code-box">S</span>
+      <span class="code-box">!</span>
+    </div>
+  </section>
+
+  <section class="grid-layout">
+    <article class="terminal-card section-card">
+      <div class="section-label">01 / ABOUT ME</div>
+      <h2>Who I am</h2>
+      <p>{{ content.about }}</p>
+    </article>
+
+    <article class="terminal-card section-card">
+      <div class="section-label">02 / WHAT I PLAY</div>
+      <h2>Games</h2>
+      <ul class="terminal-list">
+        {% for game in content.games %}
+          <li>{{ game }}</li>
+        {% endfor %}
+      </ul>
+    </article>
+
+    <article class="terminal-card section-card">
+      <div class="section-label">03 / MY WEBSITES</div>
+      <h2>Links</h2>
+      <div class="link-stack">
+        {% for site in content.websites %}
+          <a href="{{ site.url }}" target="_blank" rel="noreferrer" class="terminal-link">
+            <span>{{ site.name }}</span>
+            <span class="link-arrow">OPEN</span>
+          </a>
+        {% endfor %}
+      </div>
+    </article>
+
+    <article class="terminal-card section-card">
+      <div class="section-label">04 / MORE STUFF</div>
+      <h2>Extra</h2>
+      <ul class="terminal-list">
+        {% for item in content.more %}
+          <li>{{ item }}</li>
+        {% endfor %}
+      </ul>
+    </article>
+  </section>
+
+  <div class="footer-strip">
+    <a href="{{ url_for('admin_login') }}" class="admin-link">ADMIN LOGIN</a>
+  </div>
+</main>
+{% endblock %}

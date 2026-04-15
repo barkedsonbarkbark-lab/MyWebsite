@@ -1,0 +1,25 @@
+{% extends "base.html" %}
+{% set title = "Admin Login" %}
+{% block body %}
+<main class="page-shell narrow-shell">
+  <section class="terminal-card admin-card">
+    <div class="section-label">SECURE ACCESS</div>
+    <h1>Admin Login</h1>
+    <p class="admin-copy">Enter the password to edit the homepage content.</p>
+
+    {% with messages = get_flashed_messages(with_categories=true) %}
+      {% if messages %}
+        {% for category, message in messages %}
+          <div class="flash flash-{{ category }}">{{ message }}</div>
+        {% endfor %}
+      {% endif %}
+    {% endwith %}
+
+    <form method="post" class="admin-form">
+      <label for="password">Password</label>
+      <input id="password" name="password" type="password" required>
+      <button type="submit">ENTER PANEL</button>
+    </form>
+  </section>
+</main>
+{% endblock %}

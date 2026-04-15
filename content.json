@@ -1,0 +1,30 @@
+{
+  "hero_title": "Maks Terminal",
+  "hero_tagline": "A personal page for the games I play, the sites I build, and the stuff I'm into.",
+  "about": "Hey, I'm Maks. This page is my corner of the internet where I can show what I play, what I make, and whatever else feels worth sharing.",
+  "games": [
+    "Animal Company",
+    "Minecraft",
+    "Roblox",
+    "Fortnite"
+  ],
+  "websites": [
+    {
+      "name": "Main Website",
+      "url": "https://example.com"
+    },
+    {
+      "name": "Projects Page",
+      "url": "https://example.com/projects"
+    },
+    {
+      "name": "Profile Link",
+      "url": "https://example.com/profile"
+    }
+  ],
+  "more": [
+    "I like building cool web stuff.",
+    "I enjoy retro game menus and glowing UI.",
+    "This site runs with Python and can be edited from the admin panel."
+  ]
+}

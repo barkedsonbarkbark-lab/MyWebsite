@@ -1,0 +1,53 @@
+{% extends "base.html" %}
+{% set title = "Admin Panel" %}
+{% block body %}
+<main class="page-shell">
+  <section class="terminal-card admin-card wide-card">
+    <div class="admin-topbar">
+      <div>
+        <div class="section-label">CONTROL PANEL</div>
+        <h1>Edit Site Content</h1>
+      </div>
+      <form method="post" action="{{ url_for('admin_logout') }}">
+        <button type="submit" class="ghost-button">LOG OUT</button>
+      </form>
+    </div>
+
+    {% with messages = get_flashed_messages(with_categories=true) %}
+      {% if messages %}
+        {% for category, message in messages %}
+          <div class="flash flash-{{ category }}">{{ message }}</div>
+        {% endfor %}
+      {% endif %}
+    {% endwith %}
+
+    <form method="post" class="admin-form grid-form">
+      <label for="hero_title">Hero title</label>
+      <input id="hero_title" name="hero_title" value="{{ content.hero_title }}" required>
+
+      <label for="hero_tagline">Hero tagline</label>
+      <input id="hero_tagline" name="hero_tagline" value="{{ content.hero_tagline }}" required>
+
+      <label for="about">About text</label>
+      <textarea id="about" name="about" rows="5" required>{{ content.about }}</textarea>
+
+      <label for="games">Games
+        <span class="field-help">One per line</span>
+      </label>
+      <textarea id="games" name="games" rows="5">{{ games_text }}</textarea>
+
+      <label for="websites">Websites
+        <span class="field-help">Use: Name | https://link.com</span>
+      </label>
+      <textarea id="websites" name="websites" rows="5">{{ websites_text }}</textarea>
+
+      <label for="more">More stuff
+        <span class="field-help">One per line</span>
+      </label>
+      <textarea id="more" name="more" rows="5">{{ more_text }}</textarea>
+
+      <button type="submit">SAVE CHANGES</button>
+    </form>
+  </section>
+</main>
+{% endblock %}
