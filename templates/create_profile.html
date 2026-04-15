@@ -1,0 +1,124 @@
+{% extends "base.html" %}
+{% set title = "Create Your Page" %}
+{% block body %}
+<main class="page-shell">
+  <div class="site-nav">
+    <a href="{{ url_for('home') }}" class="ghost-link">HOME</a>
+  </div>
+
+  <section class="terminal-card admin-card wide-card">
+    <div class="admin-topbar">
+      <div>
+        <div class="section-label">PAGE CREATOR</div>
+        <h1>Create your own homepage</h1>
+        <p class="admin-copy">Fill this out and the site will publish your own public page right away.</p>
+      </div>
+      <a href="{{ url_for('home') }}" class="admin-link ghost-button">BACK TO HOME</a>
+    </div>
+
+    {% with messages = get_flashed_messages(with_categories=true) %}
+      {% if messages %}
+        {% for category, message in messages %}
+          <div class="flash flash-{{ category }}">{{ message }}</div>
+        {% endfor %}
+      {% endif %}
+    {% endwith %}
+
+    <div class="quick-panel">
+      <div class="quick-box">
+        <div class="section-label">YOUR URL</div>
+        <div class="path-preview">Live path: <strong>/@<span id="live-username-preview">yourname</span></strong></div>
+      </div>
+      <div class="quick-box">
+        <div class="section-label">WHAT YOU CAN ADD</div>
+        <p class="field-help">Intro, links, favorite things, projects, skills, and a first post.</p>
+      </div>
+      <div class="quick-box">
+        <div class="section-label">NOTE</div>
+        <p class="field-help">Usernames must be unique and cannot overwrite an existing page.</p>
+      </div>
+    </div>
+
+    <form method="post" class="admin-form grid-form" id="public-create-form">
+      <div class="form-columns">
+        <section class="editor-section">
+          <div class="section-label">PROFILE CORE</div>
+
+          <label for="username">Username</label>
+          <input id="username" name="username" value="{{ form_data.username }}" required>
+
+          <label for="display_name">Display name</label>
+          <input id="display_name" name="display_name" value="{{ form_data.display_name }}" required>
+
+          <label for="hero_tagline">Tagline</label>
+          <input id="hero_tagline" name="hero_tagline" value="{{ form_data.hero_tagline }}" placeholder="Tell people what your page is about">
+
+          <label for="intro_note">Intro note</label>
+          <input id="intro_note" name="intro_note" value="{{ form_data.intro_note }}" placeholder="Short live status or intro">
+
+          <label for="about">About you</label>
+          <textarea id="about" name="about" rows="6" required>{{ form_data.about }}</textarea>
+
+          <label for="favorite_things">Favorite things
+            <span class="field-help">One per line</span>
+          </label>
+          <textarea id="favorite_things" name="favorite_things" rows="6">{{ form_data.favorite_things }}</textarea>
+
+          <label for="websites">Links
+            <span class="field-help">Use: Name | https://link.com</span>
+          </label>
+          <textarea id="websites" name="websites" rows="6">{{ form_data.websites }}</textarea>
+        </section>
+
+        <section class="editor-section">
+          <div class="section-label">EXTRA STUFF</div>
+
+          <label for="projects">Projects
+            <span class="field-help">One per line</span>
+          </label>
+          <textarea id="projects" name="projects" rows="5">{{ form_data.projects }}</textarea>
+
+          <label for="skills">Skills
+            <span class="field-help">One per line</span>
+          </label>
+          <textarea id="skills" name="skills" rows="5">{{ form_data.skills }}</textarea>
+
+          <label for="more">More stuff
+            <span class="field-help">One per line</span>
+          </label>
+          <textarea id="more" name="more" rows="5">{{ form_data.more }}</textarea>
+
+          <label for="first_post">First post</label>
+          <textarea id="first_post" name="first_post" rows="5">{{ form_data.first_post }}</textarea>
+
+          <label for="contact_email">Email</label>
+          <input id="contact_email" name="contact_email" value="{{ form_data.contact_email }}">
+
+          <label for="contact_discord">Discord</label>
+          <input id="contact_discord" name="contact_discord" value="{{ form_data.contact_discord }}">
+
+          <label for="contact_location">Location</label>
+          <input id="contact_location" name="contact_location" value="{{ form_data.contact_location }}">
+        </section>
+      </div>
+
+      <div class="save-bar">
+        <div class="save-status">Submitting creates a live public page instantly.</div>
+        <button type="submit">CREATE MY PAGE</button>
+      </div>
+    </form>
+  </section>
+</main>
+<script>
+  const usernameInput = document.getElementById("username");
+  const usernamePreview = document.getElementById("live-username-preview");
+
+  function syncUsernamePreview() {
+    const clean = (usernameInput.value || "yourname").replace(/^@+/, "").trim() || "yourname";
+    usernamePreview.textContent = clean;
+  }
+
+  usernameInput.addEventListener("input", syncUsernamePreview);
+  syncUsernamePreview();
+</script>
+{% endblock %}

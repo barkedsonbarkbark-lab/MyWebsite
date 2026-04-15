@@ -96,6 +96,8 @@ DEFAULT_DATA = {
     },
 }
 
+RESERVED_USERNAMES = {"admin", "static", "create"}
+
 
 def ensure_profiles_file():
     if not PROFILES_FILE.exists():
@@ -183,6 +185,13 @@ def posts_to_text(posts):
     return "\n\n".join(chunk for chunk in chunks if chunk)
 
 
+def profile_excerpt(profile):
+    about = (profile.get("about") or "").strip()
+    if not about:
+        return ""
+    return about[:117] + "..." if len(about) > 120 else about
+
+
 def build_profile_from_request(form, existing_profile=None):
     existing_profile = existing_profile or DEFAULT_PROFILE
     username = form.get("username", existing_profile.get("username", "BloodedVR")).strip().lstrip("@") or "BloodedVR"
@@ -212,6 +221,54 @@ def build_profile_from_request(form, existing_profile=None):
     }
 
 
+def build_public_profile_from_request(form):
+    username = form.get("username", "").strip().lstrip("@") or "NewUser"
+    display_name = form.get("display_name", "").strip() or username
+    tagline = form.get("hero_tagline", "").strip() or "Just launched my own page on this site."
+    about = form.get("about", "").strip() or "This is my new page."
+    favorite_things = parse_lines(form.get("favorite_things", ""))
+    links = parse_websites(form.get("websites", ""))
+
+    profile = DEFAULT_PROFILE.copy()
+    profile.update(
+        {
+            "username": username,
+            "hero_title": display_name,
+            "hero_tagline": tagline,
+            "status_badge": f"ONLINE // @{username.upper()}",
+            "intro_note": form.get("intro_note", "").strip() or "Building my own homepage.",
+            "about": about,
+            "games": favorite_things or ["Web design", "Games", "Projects"],
+            "websites": links or [{"name": "My first link", "url": "#links"}],
+            "more": parse_lines(form.get("more", "")) or [
+                "Made this page with the built-in creator.",
+                "Adding more stuff soon.",
+            ],
+            "announcements": [f"{display_name} just created a page."],
+            "posts": [
+                {
+                    "title": "My Page Is Live",
+                    "meta": "First Post",
+                    "body": form.get("first_post", "").strip()
+                    or "I just launched my page here and I'm going to keep customizing it.",
+                }
+            ],
+            "timeline": ["Created my page", "Shared my favorite things", "Ready for updates"],
+            "projects": parse_lines(form.get("projects", "")) or ["My personal homepage"],
+            "skills": parse_lines(form.get("skills", "")) or ["Creativity", "Internet", "Ideas"],
+            "contact_email": form.get("contact_email", "").strip(),
+            "contact_discord": form.get("contact_discord", "").strip(),
+            "contact_location": form.get("contact_location", "").strip() or "Online",
+            "footer_note": f"{display_name}'s page is live on the creator hub.",
+            "primary_button_label": "OPEN MY LINKS",
+            "primary_button_url": "#links",
+            "custom_html": "",
+            "custom_css": "",
+        }
+    )
+    return profile
+
+
 def build_admin_context(profile):
     websites_text = "\n".join(
         f"{site.get('name', '').strip()} | {site.get('url', '').strip()}"
@@ -231,6 +288,29 @@ def build_admin_context(profile):
     }
 
 
+def build_homepage_context():
+    data = load_data()
+    active_key = normalize_username(data["active_username"])
+    active_profile = data["profiles"].get(active_key)
+
+    cards = []
+    for profile in data["profiles"].values():
+        cards.append(
+            {
+                "username": profile.get("username", ""),
+                "hero_title": profile.get("hero_title", profile.get("username", "")),
+                "hero_tagline": profile.get("hero_tagline", ""),
+                "intro_note": profile.get("intro_note", ""),
+                "about_excerpt": profile_excerpt(profile),
+                "projects_count": len(profile.get("projects", [])),
+                "links_count": len(profile.get("websites", [])),
+            }
+        )
+
+    cards.sort(key=lambda item: item["username"].lower())
+    return {"active_profile": active_profile, "profile_cards": cards, "profile_count": len(cards)}
+
+
 app = Flask(__name__)
 app.secret_key = os.getenv("SECRET_KEY", "maks-terminal-secret")
 ADMIN_PASSWORD = os.getenv("ADMIN_PASSWORD", "Maksiu04112013")
@@ -240,8 +320,49 @@ app.config["SESSION_COOKIE_SAMESITE"] = "Lax"
 
 @app.route("/")
 def home():
-    data = load_data()
-    return redirect(url_for("profile_page", username=data["active_username"]))
+    return render_template("landing.html", **build_homepage_context())
+
+
+@app.route("/create", methods=["GET", "POST"])
+def create_profile():
+    form_data = {
+        "username": "",
+        "display_name": "",
+        "hero_tagline": "",
+        "intro_note": "",
+        "about": "",
+        "favorite_things": "",
+        "websites": "",
+        "projects": "",
+        "skills": "",
+        "more": "",
+        "first_post": "",
+        "contact_email": "",
+        "contact_discord": "",
+        "contact_location": "",
+    }
+
+    if request.method == "POST":
+        form_data.update({key: request.form.get(key, "") for key in form_data})
+        username = request.form.get("username", "")
+        normalized = normalize_username(username)
+
+        if not normalized:
+            flash("Choose a username first.", "error")
+        elif normalized in RESERVED_USERNAMES:
+            flash("That username is reserved. Pick a different one.", "error")
+        else:
+            data = load_data()
+            if normalized in data["profiles"]:
+                flash("That username already exists. Try another one.", "error")
+            else:
+                profile = build_public_profile_from_request(request.form)
+                data["profiles"][normalized] = profile
+                save_data(data)
+                flash("Your page is live now.", "success")
+                return redirect(url_for("profile_page", username=profile["username"]))
+
+    return render_template("create_profile.html", form_data=form_data)
 
 
 @app.route("/@<username>")
@@ -254,7 +375,7 @@ def profile_page(username):
 
 @app.route("/<username>")
 def profile_page_plain(username):
-    if username in {"admin", "static"}:
+    if normalize_username(username) in RESERVED_USERNAMES:
         abort(404)
     _, profile = get_profile(username)
     if not profile:

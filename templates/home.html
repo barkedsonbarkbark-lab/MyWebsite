@@ -2,6 +2,10 @@
 {% set title = content.hero_title %}
 {% block body %}
 <main class="page-shell">
+  <div class="site-nav">
+    <a href="{{ url_for('home') }}" class="ghost-link">HOME</a>
+    <a href="{{ url_for('create_profile') }}" class="ghost-link">CREATE YOUR PAGE</a>
+  </div>
   <section class="terminal-card hero-card">
     <div class="version-line">PROFILE NODE v2.0.8000</div>
     <div class="status-chip">{{ content.status_badge }}</div>
@@ -161,6 +165,8 @@
   {% endif %}
 
   <div class="footer-strip">
+    <a href="{{ url_for('home') }}" class="admin-link ghost-button">ALL PAGES</a>
+    <a href="{{ url_for('create_profile') }}" class="admin-link">CREATE YOUR OWN</a>
     <a href="{{ url_for('admin_login') }}" class="admin-link">ADMIN LOGIN</a>
   </div>
   <p class="footer-note">{{ content.footer_note }}</p>

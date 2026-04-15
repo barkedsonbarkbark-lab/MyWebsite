@@ -1,0 +1,104 @@
+{% extends "base.html" %}
+{% set title = "Creator Hub" %}
+{% block body %}
+<main class="page-shell">
+  <section class="terminal-card hero-card">
+    <div class="version-line">CREATOR HUB v3.0</div>
+    <div class="status-chip">LIVE // BUILD YOUR OWN PAGE</div>
+    <div class="hero-layout">
+      <div>
+        <div class="logo-wrap">
+          <div class="profile-logo">
+            <span class="logo-mark">CH</span>
+            <div class="logo-copy">
+              <span class="logo-top">PUBLIC PAGE MAKER</span>
+              <span class="logo-name">Make your own homepage</span>
+            </div>
+          </div>
+        </div>
+        <div class="brand-frame">
+          <div class="brand-title">CREATE. SHARE. CUSTOMIZE.</div>
+        </div>
+        <p class="hero-tagline">
+          This site now lets people create their own personal page with a username, intro, links, projects,
+          favorite things, and a simple homepage layout.
+        </p>
+      </div>
+      <aside class="hero-note-card">
+        <div class="section-label">SITE SNAPSHOT</div>
+        <p>Pick a username, fill out the form, and your page goes live right away.</p>
+        <div class="mini-stats">
+          <div><strong>{{ profile_count }}</strong><span>pages</span></div>
+          <div><strong>1</strong><span>creator form</span></div>
+          <div><strong>24/7</strong><span>live links</span></div>
+        </div>
+        {% if active_profile %}
+          <div class="profile-path">Featured: /@{{ active_profile.username }}</div>
+        {% endif %}
+      </aside>
+    </div>
+    <div class="hero-actions">
+      <a href="{{ url_for('create_profile') }}" class="admin-link">CREATE YOUR PAGE</a>
+      {% if active_profile %}
+        <a href="{{ url_for('profile_page', username=active_profile.username) }}" class="admin-link ghost-button">OPEN FEATURED PAGE</a>
+      {% endif %}
+    </div>
+  </section>
+
+  {% if active_profile %}
+    <section class="terminal-card section-card full-span">
+      <div class="section-label">00 / FEATURED PAGE</div>
+      <h2>@{{ active_profile.username }}</h2>
+      <p>{{ active_profile.hero_tagline }}</p>
+      <div class="homepage-feature-actions">
+        <a href="{{ url_for('profile_page', username=active_profile.username) }}" class="terminal-link">
+          <span>Visit {{ active_profile.hero_title }}</span>
+          <span class="link-arrow">OPEN</span>
+        </a>
+      </div>
+    </section>
+  {% endif %}
+
+  <section class="terminal-card section-card full-span">
+    <div class="section-label">01 / HOW IT WORKS</div>
+    <h2>Build your page in a minute</h2>
+    <div class="homepage-steps">
+      <div class="quick-box">
+        <strong>1. Pick a username</strong>
+        <p>That becomes your page path like `/@yourname`.</p>
+      </div>
+      <div class="quick-box">
+        <strong>2. Add your stuff</strong>
+        <p>Write your intro, links, projects, favorites, and first post.</p>
+      </div>
+      <div class="quick-box">
+        <strong>3. Share it</strong>
+        <p>Your homepage is live as soon as you submit the form.</p>
+      </div>
+    </div>
+  </section>
+
+  <section class="terminal-card section-card full-span">
+    <div class="section-label">02 / COMMUNITY PAGES</div>
+    <h2>Browse created pages</h2>
+    <div class="community-grid">
+      {% for profile in profile_cards %}
+        <article class="community-card">
+          <div class="post-meta">@{{ profile.username }}</div>
+          <h3>{{ profile.hero_title }}</h3>
+          <p>{{ profile.hero_tagline }}</p>
+          <p class="community-excerpt">{{ profile.about_excerpt }}</p>
+          <div class="community-meta">
+            <span>{{ profile.projects_count }} projects</span>
+            <span>{{ profile.links_count }} links</span>
+          </div>
+          <a href="{{ url_for('profile_page', username=profile.username) }}" class="terminal-link">
+            <span>Open page</span>
+            <span class="link-arrow">GO</span>
+          </a>
+        </article>
+      {% endfor %}
+    </div>
+  </section>
+</main>
+{% endblock %}
