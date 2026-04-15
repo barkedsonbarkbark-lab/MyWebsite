@@ -447,6 +447,13 @@ button:hover {
   align-items: start;
 }
 
+.admin-top-actions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 12px;
+  align-items: center;
+}
+
 .wide-card {
   max-width: 1300px;
   margin: 0 auto;
@@ -474,6 +481,10 @@ button:hover {
 
 .quick-panel.two-up {
   grid-template-columns: repeat(2, minmax(0, 1fr));
+}
+
+.admin-overview {
+  grid-template-columns: repeat(3, minmax(0, 1fr));
 }
 
 .quick-box {
@@ -520,6 +531,89 @@ button:hover {
   grid-template-columns: minmax(0, 1.2fr) minmax(320px, 0.8fr);
   gap: 20px;
   align-items: start;
+}
+
+.admin-manager-grid {
+  display: grid;
+  grid-template-columns: minmax(260px, 320px) minmax(0, 1fr);
+  gap: 20px;
+  align-items: start;
+}
+
+.admin-main-column {
+  display: grid;
+  gap: 18px;
+}
+
+.profile-manager {
+  padding: 18px;
+  position: sticky;
+  top: 20px;
+}
+
+.manager-actions {
+  margin: 16px 0;
+}
+
+.manager-actions form,
+.profile-list-actions,
+.danger-box form {
+  display: contents;
+}
+
+.profile-list {
+  display: grid;
+  gap: 12px;
+}
+
+.profile-list-card {
+  display: grid;
+  gap: 10px;
+  padding: 14px;
+  border: 1px solid rgba(84, 255, 157, 0.16);
+  background: rgba(84, 255, 157, 0.03);
+}
+
+.profile-list-card.is-selected {
+  border-color: var(--line-strong);
+  box-shadow: 0 0 0 1px rgba(84, 255, 157, 0.18);
+}
+
+.profile-list-card p {
+  margin: 0;
+  color: var(--muted);
+}
+
+.profile-list-meta {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+  align-items: center;
+}
+
+.profile-list-actions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+}
+
+.admin-controls {
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+}
+
+.danger-box {
+  border-color: rgba(255, 143, 143, 0.3);
+  background: rgba(255, 143, 143, 0.04);
+}
+
+.danger-button {
+  border-color: rgba(255, 143, 143, 0.4);
+  color: #ffd4d4;
+}
+
+.danger-button:hover {
+  background: rgba(255, 143, 143, 0.1);
+  box-shadow: 0 0 18px rgba(255, 143, 143, 0.12);
 }
 
 .form-columns {
@@ -669,6 +763,7 @@ textarea:focus {
   }
 
   .grid-layout,
+  .admin-manager-grid,
   .admin-dashboard,
   .form-columns,
   .hero-layout,
@@ -685,6 +780,14 @@ textarea:focus {
 
   .admin-topbar {
     flex-direction: column;
+  }
+
+  .admin-top-actions {
+    width: 100%;
+  }
+
+  .profile-manager {
+    position: static;
   }
 
   .code-box {

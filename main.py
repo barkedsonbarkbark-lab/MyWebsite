@@ -221,6 +221,23 @@ def build_profile_from_request(form, existing_profile=None):
     }
 
 
+def build_profile_list(profiles, active_username):
+    active_key = normalize_username(active_username)
+    items = []
+    for key, profile in sorted(profiles.items(), key=lambda item: item[1].get("username", "").lower()):
+        items.append(
+            {
+                "key": key,
+                "username": profile.get("username", ""),
+                "hero_title": profile.get("hero_title", profile.get("username", "")),
+                "hero_tagline": profile.get("hero_tagline", ""),
+                "profile_url": f"/@{profile.get('username', '')}",
+                "is_active": key == active_key,
+            }
+        )
+    return items
+
+
 def build_public_profile_from_request(form):
     username = form.get("username", "").strip().lstrip("@") or "NewUser"
     display_name = form.get("display_name", "").strip() or username
@@ -269,7 +286,7 @@ def build_public_profile_from_request(form):
     return profile
 
 
-def build_admin_context(profile):
+def build_admin_context(profile, data, selected_key):
     websites_text = "\n".join(
         f"{site.get('name', '').strip()} | {site.get('url', '').strip()}"
         for site in profile.get("websites", [])
@@ -285,6 +302,10 @@ def build_admin_context(profile):
         "skills_text": "\n".join(profile.get("skills", [])),
         "posts_text": posts_to_text(profile.get("posts", [])),
         "profile_url": f"/@{profile.get('username', 'BloodedVR')}",
+        "selected_key": selected_key,
+        "active_username": data["active_username"],
+        "profile_count": len(data["profiles"]),
+        "profile_cards": build_profile_list(data["profiles"], data["active_username"]),
     }
 
 
@@ -400,22 +421,80 @@ def admin_panel():
         return redirect(url_for("admin_login"))
 
     data = load_data()
-    active_key = normalize_username(data["active_username"])
-    profile = data["profiles"].get(active_key, DEFAULT_PROFILE.copy())
+    selected_key = normalize_username(request.args.get("profile") or data["active_username"])
+    profile = data["profiles"].get(selected_key)
+    if not profile:
+        selected_key = normalize_username(data["active_username"])
+        profile = data["profiles"].get(selected_key, DEFAULT_PROFILE.copy())
 
     if request.method == "POST":
+        action = request.form.get("action", "save")
+        original_key = normalize_username(request.form.get("original_username", profile.get("username", "")))
+
+        if action == "new":
+            new_profile = DEFAULT_PROFILE.copy()
+            new_profile["username"] = "NewUser"
+            new_profile["hero_title"] = "New User"
+            new_profile["hero_tagline"] = "A fresh page waiting to be customized."
+            base_key = normalize_username(new_profile["username"])
+            new_key = base_key
+            index = 1
+            while new_key in data["profiles"] or new_key in RESERVED_USERNAMES:
+                index += 1
+                new_profile["username"] = f"NewUser{index}"
+                new_profile["hero_title"] = f"New User {index}"
+                new_key = normalize_username(new_profile["username"])
+            data["profiles"][new_key] = new_profile
+            save_data(data)
+            flash("New profile created. You can edit it now.", "success")
+            return redirect(url_for("admin_panel", profile=new_profile["username"]))
+
+        if action == "delete":
+            if len(data["profiles"]) <= 1:
+                flash("You need at least one profile on the site.", "error")
+                return redirect(url_for("admin_panel", profile=profile["username"]))
+            if original_key not in data["profiles"]:
+                flash("That profile no longer exists.", "error")
+                return redirect(url_for("admin_panel"))
+
+            deleted_profile = data["profiles"].pop(original_key)
+            if normalize_username(data["active_username"]) == original_key:
+                replacement = next(iter(data["profiles"].values()))
+                data["active_username"] = replacement["username"]
+            save_data(data)
+            flash(f"Deleted @{deleted_profile['username']}.", "success")
+            return redirect(url_for("admin_panel", profile=data["active_username"]))
+
+        if action == "feature":
+            if original_key not in data["profiles"]:
+                flash("That profile no longer exists.", "error")
+                return redirect(url_for("admin_panel"))
+            data["active_username"] = data["profiles"][original_key]["username"]
+            save_data(data)
+            flash(f"Homepage featured profile set to @{data['active_username']}.", "success")
+            return redirect(url_for("admin_panel", profile=data["active_username"]))
+
         updated_profile = build_profile_from_request(request.form, profile)
         new_key = normalize_username(updated_profile["username"])
-        old_key = normalize_username(profile["username"])
-        if old_key in data["profiles"] and old_key != new_key:
-            del data["profiles"][old_key]
+        if not new_key:
+            flash("Username cannot be empty.", "error")
+            return redirect(url_for("admin_panel", profile=profile["username"]))
+        if new_key in RESERVED_USERNAMES:
+            flash("That username is reserved.", "error")
+            return redirect(url_for("admin_panel", profile=profile["username"]))
+        if new_key != original_key and new_key in data["profiles"]:
+            flash("That username already exists.", "error")
+            return redirect(url_for("admin_panel", profile=profile["username"]))
+        if original_key in data["profiles"] and original_key != new_key:
+            del data["profiles"][original_key]
         data["profiles"][new_key] = updated_profile
-        data["active_username"] = updated_profile["username"]
+        if normalize_username(data["active_username"]) == original_key:
+            data["active_username"] = updated_profile["username"]
         save_data(data)
-        flash("Saved. Your profile site has been updated.", "success")
-        return redirect(url_for("admin_panel"))
+        flash("Saved. This profile has been updated.", "success")
+        return redirect(url_for("admin_panel", profile=updated_profile["username"]))
 
-    return render_template("admin_panel.html", **build_admin_context(profile))
+    return render_template("admin_panel.html", **build_admin_context(profile, data, selected_key))
 
 
 @app.post("/admin/save")
@@ -424,17 +503,35 @@ def admin_save():
         return jsonify({"ok": False, "error": "Unauthorized"}), 401
 
     data = load_data()
-    active_key = normalize_username(data["active_username"])
-    profile = data["profiles"].get(active_key, DEFAULT_PROFILE.copy())
+    original_key = normalize_username(request.form.get("original_username", data["active_username"]))
+    profile = data["profiles"].get(original_key)
+    if not profile:
+        return jsonify({"ok": False, "error": "Profile not found"}), 404
+
     updated_profile = build_profile_from_request(request.form, profile)
     new_key = normalize_username(updated_profile["username"])
-    old_key = normalize_username(profile["username"])
-    if old_key in data["profiles"] and old_key != new_key:
-        del data["profiles"][old_key]
+    if not new_key:
+        return jsonify({"ok": False, "error": "Username cannot be empty"}), 400
+    if new_key in RESERVED_USERNAMES:
+        return jsonify({"ok": False, "error": "That username is reserved"}), 400
+    if new_key != original_key and new_key in data["profiles"]:
+        return jsonify({"ok": False, "error": "That username already exists"}), 400
+
+    if original_key in data["profiles"] and original_key != new_key:
+        del data["profiles"][original_key]
     data["profiles"][new_key] = updated_profile
-    data["active_username"] = updated_profile["username"]
+    if normalize_username(data["active_username"]) == original_key:
+        data["active_username"] = updated_profile["username"]
     save_data(data)
-    return jsonify({"ok": True, "message": "Live update saved.", "profile_url": f"/@{updated_profile['username']}"})
+    return jsonify(
+        {
+            "ok": True,
+            "message": "Live update saved.",
+            "profile_url": f"/@{updated_profile['username']}",
+            "selected_key": new_key,
+            "active_username": data["active_username"],
+        }
+    )
 
 
 @app.post("/admin/logout")

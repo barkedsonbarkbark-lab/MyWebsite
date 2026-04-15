@@ -6,12 +6,15 @@
     <div class="admin-topbar">
       <div>
         <div class="section-label">CONTROL PANEL</div>
-        <h1>Build A Username Profile</h1>
-        <p class="admin-copy">Edit the active profile, set the username path, and update the site live.</p>
+        <h1>Manage Pages And Homepage</h1>
+        <p class="admin-copy">Switch between user pages, edit the selected profile, and choose which page the homepage features.</p>
       </div>
-      <form method="post" action="{{ url_for('admin_logout') }}">
-        <button type="submit" class="ghost-button">LOG OUT</button>
-      </form>
+      <div class="admin-top-actions">
+        <a href="{{ url_for('home') }}" class="admin-link ghost-button">OPEN HOME</a>
+        <form method="post" action="{{ url_for('admin_logout') }}">
+          <button type="submit" class="ghost-button">LOG OUT</button>
+        </form>
+      </div>
     </div>
 
     {% with messages = get_flashed_messages(with_categories=true) %}
@@ -22,164 +25,206 @@
       {% endif %}
     {% endwith %}
 
-    <div class="action-bar">
-      <button type="button" class="action-button" data-target="username">Edit Username URL</button>
-      <button type="button" class="action-button" data-target="hero_title">Update Site Content</button>
-      <button type="button" class="action-button" data-target="announcements" data-mode="announce">Send Announcement</button>
-      <button type="button" class="action-button" data-target="posts" data-mode="post">Make Post</button>
-      <button type="button" class="action-button" data-target="custom_html">Edit Website HTML</button>
-      <button type="button" class="action-button" id="refresh-preview">Refresh Preview</button>
-    </div>
-
-    <div class="quick-panel two-up">
+    <div class="quick-panel admin-overview">
       <div class="quick-box">
-        <div class="section-label">PROFILE PATH</div>
-        <div class="path-preview">Live URL: <strong id="profile-path-label">{{ profile_url }}</strong></div>
-        <p class="field-help">Visitors can use `/<username>` or `/@<username>`, and the main site redirects to the active profile.</p>
+        <div class="section-label">HOMEPAGE FEATURE</div>
+        <div class="path-preview">Now featuring: <strong>@{{ active_username }}</strong></div>
+        <p class="field-help">The homepage uses this page as the featured profile card.</p>
       </div>
       <div class="quick-box">
-        <div class="section-label">QUICK ANNOUNCEMENT</div>
-        <label for="quick_announcement">Write a fast broadcast</label>
-        <input id="quick_announcement" type="text" placeholder="New update is live...">
-        <button type="button" class="ghost-button quick-trigger" data-mode="announce">ADD TO ANNOUNCEMENTS</button>
+        <div class="section-label">SELECTED PAGE</div>
+        <div class="path-preview">Editing: <strong id="profile-path-label">{{ profile_url }}</strong></div>
+        <p class="field-help">Visitors can open `/<username>` or `/@<username>`.</p>
+      </div>
+      <div class="quick-box">
+        <div class="section-label">SITE SIZE</div>
+        <div class="path-preview"><strong>{{ profile_count }}</strong> public pages</div>
+        <p class="field-help">You can create, edit, feature, or delete pages here.</p>
       </div>
     </div>
 
-    <div class="function-grid">
-      <div class="function-chip">1 Username URL</div>
-      <div class="function-chip">2 Hero Title</div>
-      <div class="function-chip">3 Hero Tagline</div>
-      <div class="function-chip">4 Status Badge</div>
-      <div class="function-chip">5 Intro Note</div>
-      <div class="function-chip">6 About</div>
-      <div class="function-chip">7 Games</div>
-      <div class="function-chip">8 Websites</div>
-      <div class="function-chip">9 More Stuff</div>
-      <div class="function-chip">10 Announcements</div>
-      <div class="function-chip">11 Posts</div>
-      <div class="function-chip">12 Timeline</div>
-      <div class="function-chip">13 Projects</div>
-      <div class="function-chip">14 Skills</div>
-      <div class="function-chip">15 Email</div>
-      <div class="function-chip">16 Discord</div>
-      <div class="function-chip">17 Location</div>
-      <div class="function-chip">18 Footer Note</div>
-      <div class="function-chip">19 Button Label</div>
-      <div class="function-chip">20 Button URL</div>
-      <div class="function-chip">21 Custom HTML/CSS</div>
-    </div>
-
-    <div class="admin-dashboard">
-      <form method="post" class="admin-form grid-form" id="editor-form">
-        <div class="form-columns">
-          <section class="editor-section">
-            <div class="section-label">PROFILE CORE</div>
-
-            <label for="username">Username
-              <span class="field-help">This becomes `/@Username`</span>
-            </label>
-            <input id="username" name="username" value="{{ content.username }}" required>
-
-            <label for="hero_title">Hero title</label>
-            <input id="hero_title" name="hero_title" value="{{ content.hero_title }}" required>
-
-            <label for="hero_tagline">Hero tagline</label>
-            <input id="hero_tagline" name="hero_tagline" value="{{ content.hero_tagline }}" required>
-
-            <label for="status_badge">Status badge</label>
-            <input id="status_badge" name="status_badge" value="{{ content.status_badge }}">
-
-            <label for="intro_note">Intro note</label>
-            <input id="intro_note" name="intro_note" value="{{ content.intro_note }}">
-
-            <label for="about">About text</label>
-            <textarea id="about" name="about" rows="5" required>{{ content.about }}</textarea>
-
-            <label for="games">Games
-              <span class="field-help">One per line</span>
-            </label>
-            <textarea id="games" name="games" rows="5">{{ games_text }}</textarea>
-
-            <label for="websites">Websites
-              <span class="field-help">Use: Name | https://link.com</span>
-            </label>
-            <textarea id="websites" name="websites" rows="6">{{ websites_text }}</textarea>
-
-            <label for="more">More stuff
-              <span class="field-help">One per line</span>
-            </label>
-            <textarea id="more" name="more" rows="5">{{ more_text }}</textarea>
-
-            <label for="announcements">Announcements
-              <span class="field-help">One per line</span>
-            </label>
-            <textarea id="announcements" name="announcements" rows="5">{{ announcements_text }}</textarea>
-          </section>
-
-          <section class="editor-section">
-            <div class="section-label">PROFILE DETAILS</div>
-
-            <label for="posts">Posts
-              <span class="field-help">Format: title, next line meta, next lines body, blank line between posts</span>
-            </label>
-            <textarea id="posts" name="posts" rows="10">{{ posts_text }}</textarea>
-
-            <label for="timeline">Timeline
-              <span class="field-help">One per line</span>
-            </label>
-            <textarea id="timeline" name="timeline" rows="5">{{ timeline_text }}</textarea>
-
-            <label for="projects">Projects
-              <span class="field-help">One per line</span>
-            </label>
-            <textarea id="projects" name="projects" rows="5">{{ projects_text }}</textarea>
-
-            <label for="skills">Skills
-              <span class="field-help">One per line</span>
-            </label>
-            <textarea id="skills" name="skills" rows="5">{{ skills_text }}</textarea>
-
-            <label for="contact_email">Contact email</label>
-            <input id="contact_email" name="contact_email" value="{{ content.contact_email }}">
-
-            <label for="contact_discord">Discord</label>
-            <input id="contact_discord" name="contact_discord" value="{{ content.contact_discord }}">
-
-            <label for="contact_location">Location</label>
-            <input id="contact_location" name="contact_location" value="{{ content.contact_location }}">
-
-            <label for="footer_note">Footer note</label>
-            <input id="footer_note" name="footer_note" value="{{ content.footer_note }}">
-
-            <label for="primary_button_label">Primary button label</label>
-            <input id="primary_button_label" name="primary_button_label" value="{{ content.primary_button_label }}">
-
-            <label for="primary_button_url">Primary button URL</label>
-            <input id="primary_button_url" name="primary_button_url" value="{{ content.primary_button_url }}">
-
-            <label for="custom_html">Custom HTML
-              <span class="field-help">Rendered directly onto the homepage</span>
-            </label>
-            <textarea id="custom_html" name="custom_html" rows="7">{{ content.custom_html }}</textarea>
-
-            <label for="custom_css">Custom CSS
-              <span class="field-help">Injected into the real site on save</span>
-            </label>
-            <textarea id="custom_css" name="custom_css" rows="7">{{ content.custom_css }}</textarea>
-          </section>
+    <div class="admin-manager-grid">
+      <aside class="profile-manager terminal-card">
+        <div class="section-label">ALL PROFILES</div>
+        <h2>Choose a page</h2>
+        <div class="manager-actions">
+          <form method="post">
+            <input type="hidden" name="action" value="new">
+            <button type="submit" class="action-button">CREATE NEW PAGE</button>
+          </form>
         </div>
-
-        <div class="save-bar">
-          <div id="save-status" class="save-status">Ready. Auto-save watches for changes.</div>
-          <button type="submit">SAVE CHANGES</button>
+        <div class="profile-list">
+          {% for profile in profile_cards %}
+            <article class="profile-list-card {% if profile.key == selected_key %}is-selected{% endif %}">
+              <div class="profile-list-meta">
+                <strong>@{{ profile.username }}</strong>
+                {% if profile.is_active %}
+                  <span class="function-chip">FEATURED HOME</span>
+                {% endif %}
+              </div>
+              <p>{{ profile.hero_title }}</p>
+              <div class="profile-list-actions">
+                <a href="{{ url_for('admin_panel', profile=profile.username) }}" class="ghost-link">EDIT</a>
+                <a href="{{ profile.profile_url }}" class="ghost-link">VIEW</a>
+              </div>
+            </article>
+          {% endfor %}
         </div>
-      </form>
-
-      <aside class="preview-panel">
-        <div class="section-label">LIVE PREVIEW</div>
-        <p class="field-help">The preview reloads after each save so you can see the active profile update.</p>
-        <iframe src="{{ profile_url }}" title="Live website preview" id="live-preview"></iframe>
       </aside>
+
+      <div class="admin-main-column">
+        <div class="action-bar">
+          <button type="button" class="action-button" data-target="username">Edit Username URL</button>
+          <button type="button" class="action-button" data-target="hero_title">Update Site Content</button>
+          <button type="button" class="action-button" data-target="announcements" data-mode="announce">Send Announcement</button>
+          <button type="button" class="action-button" data-target="posts">Make Post</button>
+          <button type="button" class="action-button" data-target="custom_html">Edit Website HTML</button>
+          <button type="button" class="action-button" id="refresh-preview">Refresh Preview</button>
+        </div>
+
+        <div class="quick-panel admin-controls">
+          <div class="quick-box">
+            <div class="section-label">HOMEPAGE BUTTON</div>
+            <p class="field-help">Make the selected page the one featured on `/`.</p>
+            <form method="post">
+              <input type="hidden" name="action" value="feature">
+              <input type="hidden" name="original_username" value="{{ content.username }}">
+              <button type="submit" class="ghost-button">FEATURE THIS PAGE</button>
+            </form>
+          </div>
+          <div class="quick-box">
+            <div class="section-label">QUICK ANNOUNCEMENT</div>
+            <label for="quick_announcement">Write a fast broadcast</label>
+            <input id="quick_announcement" type="text" placeholder="New update is live...">
+            <button type="button" class="ghost-button quick-trigger">ADD TO ANNOUNCEMENTS</button>
+          </div>
+          <div class="quick-box danger-box">
+            <div class="section-label">DELETE PAGE</div>
+            <p class="field-help">Remove this page completely from the site.</p>
+            <form method="post" onsubmit="return confirm('Delete this profile page?');">
+              <input type="hidden" name="action" value="delete">
+              <input type="hidden" name="original_username" value="{{ content.username }}">
+              <button type="submit" class="ghost-button danger-button">DELETE THIS PAGE</button>
+            </form>
+          </div>
+        </div>
+
+        <div class="admin-dashboard">
+          <form method="post" class="admin-form grid-form" id="editor-form">
+            <input type="hidden" name="action" value="save">
+            <input type="hidden" name="original_username" id="original-username" value="{{ content.username }}">
+
+            <div class="form-columns">
+              <section class="editor-section">
+                <div class="section-label">PROFILE CORE</div>
+
+                <label for="username">Username
+                  <span class="field-help">This becomes `/@Username`</span>
+                </label>
+                <input id="username" name="username" value="{{ content.username }}" required>
+
+                <label for="hero_title">Hero title</label>
+                <input id="hero_title" name="hero_title" value="{{ content.hero_title }}" required>
+
+                <label for="hero_tagline">Hero tagline</label>
+                <input id="hero_tagline" name="hero_tagline" value="{{ content.hero_tagline }}" required>
+
+                <label for="status_badge">Status badge</label>
+                <input id="status_badge" name="status_badge" value="{{ content.status_badge }}">
+
+                <label for="intro_note">Intro note</label>
+                <input id="intro_note" name="intro_note" value="{{ content.intro_note }}">
+
+                <label for="about">About text</label>
+                <textarea id="about" name="about" rows="5" required>{{ content.about }}</textarea>
+
+                <label for="games">Games
+                  <span class="field-help">One per line</span>
+                </label>
+                <textarea id="games" name="games" rows="5">{{ games_text }}</textarea>
+
+                <label for="websites">Websites
+                  <span class="field-help">Use: Name | https://link.com</span>
+                </label>
+                <textarea id="websites" name="websites" rows="6">{{ websites_text }}</textarea>
+
+                <label for="more">More stuff
+                  <span class="field-help">One per line</span>
+                </label>
+                <textarea id="more" name="more" rows="5">{{ more_text }}</textarea>
+
+                <label for="announcements">Announcements
+                  <span class="field-help">One per line</span>
+                </label>
+                <textarea id="announcements" name="announcements" rows="5">{{ announcements_text }}</textarea>
+              </section>
+
+              <section class="editor-section">
+                <div class="section-label">PROFILE DETAILS</div>
+
+                <label for="posts">Posts
+                  <span class="field-help">Format: title, next line meta, next lines body, blank line between posts</span>
+                </label>
+                <textarea id="posts" name="posts" rows="10">{{ posts_text }}</textarea>
+
+                <label for="timeline">Timeline
+                  <span class="field-help">One per line</span>
+                </label>
+                <textarea id="timeline" name="timeline" rows="5">{{ timeline_text }}</textarea>
+
+                <label for="projects">Projects
+                  <span class="field-help">One per line</span>
+                </label>
+                <textarea id="projects" name="projects" rows="5">{{ projects_text }}</textarea>
+
+                <label for="skills">Skills
+                  <span class="field-help">One per line</span>
+                </label>
+                <textarea id="skills" name="skills" rows="5">{{ skills_text }}</textarea>
+
+                <label for="contact_email">Contact email</label>
+                <input id="contact_email" name="contact_email" value="{{ content.contact_email }}">
+
+                <label for="contact_discord">Discord</label>
+                <input id="contact_discord" name="contact_discord" value="{{ content.contact_discord }}">
+
+                <label for="contact_location">Location</label>
+                <input id="contact_location" name="contact_location" value="{{ content.contact_location }}">
+
+                <label for="footer_note">Footer note</label>
+                <input id="footer_note" name="footer_note" value="{{ content.footer_note }}">
+
+                <label for="primary_button_label">Primary button label</label>
+                <input id="primary_button_label" name="primary_button_label" value="{{ content.primary_button_label }}">
+
+                <label for="primary_button_url">Primary button URL</label>
+                <input id="primary_button_url" name="primary_button_url" value="{{ content.primary_button_url }}">
+
+                <label for="custom_html">Custom HTML
+                  <span class="field-help">Rendered directly onto the profile page</span>
+                </label>
+                <textarea id="custom_html" name="custom_html" rows="7">{{ content.custom_html }}</textarea>
+
+                <label for="custom_css">Custom CSS
+                  <span class="field-help">Injected into the profile page on save</span>
+                </label>
+                <textarea id="custom_css" name="custom_css" rows="7">{{ content.custom_css }}</textarea>
+              </section>
+            </div>
+
+            <div class="save-bar">
+              <div id="save-status" class="save-status">Ready. Auto-save watches for changes on the selected profile.</div>
+              <button type="submit">SAVE CHANGES</button>
+            </div>
+          </form>
+
+          <aside class="preview-panel">
+            <div class="section-label">LIVE PREVIEW</div>
+            <p class="field-help">The preview reloads after each save so you can inspect the current profile page.</p>
+            <iframe src="{{ profile_url }}" title="Live website preview" id="live-preview"></iframe>
+          </aside>
+        </div>
+      </div>
     </div>
   </section>
 </main>
@@ -190,6 +235,7 @@
   const announcementsField = document.getElementById("announcements");
   const usernameField = document.getElementById("username");
   const pathLabel = document.getElementById("profile-path-label");
+  const originalUsernameField = document.getElementById("original-username");
   let saveTimer;
 
   function syncPathPreview() {
@@ -204,14 +250,16 @@
       body: new FormData(editorForm)
     });
 
-    if (!response.ok) {
-      saveStatus.textContent = "Live save failed. Use the button to try again.";
+    const result = await response.json();
+
+    if (!response.ok || !result.ok) {
+      saveStatus.textContent = result.error || "Live save failed. Use the button to try again.";
       return;
     }
 
-    const result = await response.json();
     saveStatus.textContent = "Saved live. Preview refreshed.";
     pathLabel.textContent = result.profile_url;
+    originalUsernameField.value = usernameField.value.replace(/^@+/, "").trim() || originalUsernameField.value;
     previewFrame.src = result.profile_url + "?t=" + Date.now();
   }
 
