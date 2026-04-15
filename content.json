@@ -1,13 +1,14 @@
 {
-  "hero_title": "Maks Terminal",
-  "hero_tagline": "A personal page for the games I play, the sites I build, and the stuff I'm into.",
-  "status_badge": "ONLINE // BUILDING COOL STUFF",
-  "about": "Hey, I'm Maks. This page is my corner of the internet where I can show what I play, what I make, and whatever else feels worth sharing.",
+  "hero_title": "bloodedvr",
+  "hero_tagline": "My VR-heavy corner of the internet with the games I play, my sites, updates, and more.",
+  "status_badge": "ONLINE // VR PLAYER // BLOODEDVR",
+  "about": "Hey, I'm bloodedvr. I like Animal Company, Roblox, Minecraft, VR games, and a lot more. This site is where I share what I play, what I make, and whatever cool stuff I'm into.",
   "games": [
     "Animal Company",
     "Minecraft",
     "Roblox",
-    "Fortnite"
+    "VR Games",
+    "More multiplayer games"
   ],
   "websites": [
     {
@@ -15,58 +16,59 @@
       "url": "https://example.com"
     },
     {
-      "name": "Projects Page",
-      "url": "https://example.com/projects"
+      "name": "My Roblox Stuff",
+      "url": "https://example.com/roblox"
     },
     {
-      "name": "Profile Link",
-      "url": "https://example.com/profile"
+      "name": "My Projects",
+      "url": "https://example.com/projects"
     }
   ],
   "more": [
-    "I like building cool web stuff.",
-    "I enjoy retro game menus and glowing UI.",
+    "I like retro glowing UI and game-style menus.",
+    "I enjoy making websites and trying creative ideas.",
     "This site runs with Python and can be edited from the admin panel."
   ],
   "announcements": [
-    "New update: admin panel now controls the whole homepage.",
-    "Site is live and ready for more custom sections."
+    "bloodedvr site is now live.",
+    "Admin panel can update the homepage in real time."
   ],
   "posts": [
     {
-      "title": "First Post",
+      "title": "Welcome To My Site",
       "meta": "April 2026",
-      "body": "This site is my own little command center on the internet."
+      "body": "This is my personal website where I post my games, links, announcements, and more stuff."
     },
     {
-      "title": "What I'm Building",
-      "meta": "Projects",
-      "body": "I like making pages that feel like game menus and old terminals."
+      "title": "What I Play",
+      "meta": "Games",
+      "body": "Right now I like playing Animal Company, Roblox, Minecraft, VR games, and other fun stuff."
     }
   ],
   "timeline": [
-    "Started making websites",
-    "Built a retro-styled personal page",
-    "Added a real admin control panel"
+    "Started building my own websites",
+    "Made a retro VR-style homepage",
+    "Added a live admin dashboard"
   ],
   "projects": [
-    "Personal homepage",
-    "Mini game ideas",
-    "Custom web UI experiments"
+    "bloodedvr homepage",
+    "Game-related web ideas",
+    "Custom retro UI experiments"
   ],
   "skills": [
     "HTML",
     "CSS",
     "Python",
-    "Design ideas"
+    "VR gaming",
+    "Creative design ideas"
   ],
   "featured_video": "",
-  "contact_email": "maks@example.com",
-  "contact_discord": "maks_dev",
-  "contact_location": "Poland",
-  "footer_note": "Powered by Python on port 8000.",
-  "primary_button_label": "OPEN MY LINKS",
+  "contact_email": "bloodedvr@example.com",
+  "contact_discord": "bloodedvr",
+  "contact_location": "Online",
+  "footer_note": "bloodedvr terminal powered by Python and ready for Render.",
+  "primary_button_label": "OPEN MY STUFF",
   "primary_button_url": "#links",
-  "custom_html": "<div class=\"custom-block\"><h3>Custom HTML Area</h3><p>You can write your own HTML here from the admin panel.</p></div>",
+  "custom_html": "<div class=\"custom-block\"><h3>bloodedvr // Extra Feed</h3><p>Animal Company, Roblox, Minecraft, VR games, websites, updates, and more.</p></div>",
   "custom_css": ".custom-block { border: 1px solid rgba(84, 255, 157, 0.28); padding: 18px; background: rgba(84, 255, 157, 0.05); }"
 }
