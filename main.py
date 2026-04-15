@@ -2,91 +2,82 @@ import json
 import os
 from pathlib import Path
 
-from flask import Flask, flash, jsonify, redirect, render_template, request, session, url_for
+from flask import Flask, abort, flash, jsonify, redirect, render_template, request, session, url_for
 
 
 BASE_DIR = Path(__file__).resolve().parent
-CONTENT_FILE = BASE_DIR / "content.json"
+PROFILES_FILE = BASE_DIR / "profiles.json"
 
-DEFAULT_CONTENT = {
-    "hero_title": "bloodedvr",
-    "hero_tagline": "My VR-heavy corner of the internet with the games I play, my sites, updates, and more.",
-    "status_badge": "ONLINE // VR PLAYER // BLOODEDVR",
-    "intro_note": "Usually playing something chaotic, testing new ideas, or making the site cooler.",
+DEFAULT_PROFILE = {
+    "username": "BloodedVR",
+    "hero_title": "BloodedVR",
+    "hero_tagline": "A green-glow profile site for my games, projects, websites, and whatever I'm into.",
+    "status_badge": "ONLINE // BLOODEDVR // VR PLAYER",
+    "intro_note": "Usually playing Animal Company, testing a new idea, or making this site cooler.",
     "about": (
-        "Hey, I'm bloodedvr. I like Animal Company, Roblox, Minecraft, VR games, and a lot more. "
-        "This site is where I share what I play, what I make, and whatever cool stuff I'm into."
+        "Hey, I'm BloodedVR. I like Animal Company, Roblox, Minecraft, VR games, and more. "
+        "This is my own profile page where I can post updates, share my links, and show what I'm about."
     ),
     "games": [
         "Animal Company",
-        "Minecraft",
         "Roblox",
+        "Minecraft",
         "VR Games",
-        "More multiplayer games",
+        "Multiplayer Games",
     ],
     "websites": [
         {"name": "Main Website", "url": "https://example.com"},
-        {"name": "My Roblox Stuff", "url": "https://example.com/roblox"},
-        {"name": "My Projects", "url": "https://example.com/projects"},
+        {"name": "Projects", "url": "https://example.com/projects"},
+        {"name": "Profile Link", "url": "https://example.com/@BloodedVR"},
     ],
     "more": [
-        "I like retro glowing UI and game-style menus.",
-        "I enjoy making websites and trying creative ideas.",
-        "This site runs with Python and can be edited from the admin panel.",
+        "I like retro game menus and glowing terminal UI.",
+        "I enjoy making websites feel personal instead of generic.",
+        "This whole profile can be edited from the admin panel.",
     ],
     "announcements": [
-        "bloodedvr site is now live.",
-        "Admin panel can update the homepage in real time.",
+        "The BloodedVR profile is live.",
+        "Username profile pages are now enabled.",
     ],
     "posts": [
         {
-            "title": "Welcome To My Site",
-            "meta": "April 2026",
-            "body": "This is my personal website where I post my games, links, announcements, and more stuff.",
+            "title": "Welcome To My Page",
+            "meta": "Profile Update",
+            "body": "This is my own little corner of the internet with my games, websites, and updates.",
         },
         {
-            "title": "What I Play",
-            "meta": "Games",
-            "body": "Right now I like playing Animal Company, Roblox, Minecraft, VR games, and other fun stuff.",
+            "title": "What I Like",
+            "meta": "Gaming",
+            "body": "Animal Company, Roblox, Minecraft, VR games, and more fun stuff.",
         },
     ],
     "timeline": [
-        "Started building my own websites",
-        "Made a retro VR-style homepage",
-        "Added a live admin dashboard",
+        "Started making my own websites",
+        "Built a retro green profile page",
+        "Turned it into a username-based profile system",
     ],
     "projects": [
-        "bloodedvr homepage",
-        "Game-related web ideas",
-        "Custom retro UI experiments",
+        "BloodedVR profile page",
+        "Custom terminal-style UI",
+        "Multi-profile about-me site system",
     ],
     "skills": [
         "HTML",
         "CSS",
         "Python",
+        "Creative UI ideas",
         "VR gaming",
-        "Creative design ideas",
-    ],
-    "featured_video": "https://www.youtube.com/",
-    "video_gallery": [
-        {"name": "Latest Video Drop", "url": "https://www.youtube.com/"},
-        {"name": "Gameplay Clip", "url": "https://www.tiktok.com/"},
-    ],
-    "image_gallery": [
-        {"name": "VR Setup", "url": "https://images.unsplash.com/photo-1593508512255-86ab42a8e620?auto=format&fit=crop&w=900&q=80"},
-        {"name": "Gaming Desk", "url": "https://images.unsplash.com/photo-1542751371-adc38448a05e?auto=format&fit=crop&w=900&q=80"},
-        {"name": "Late Night Build", "url": "https://images.unsplash.com/photo-1511512578047-dfb367046420?auto=format&fit=crop&w=900&q=80"},
     ],
     "contact_email": "bloodedvr@example.com",
-    "contact_discord": "bloodedvr",
+    "contact_discord": "BloodedVR",
     "contact_location": "Online",
-    "footer_note": "bloodedvr terminal powered by Python and ready for Render.",
-    "primary_button_label": "OPEN MY STUFF",
+    "footer_note": "BloodedVR profile powered by Python and ready for Render.",
+    "primary_button_label": "OPEN MY LINKS",
     "primary_button_url": "#links",
     "custom_html": (
         "<div class=\"custom-block\">"
-        "<h3>bloodedvr // Extra Feed</h3>"
-        "<p>Animal Company, Roblox, Minecraft, VR games, websites, updates, and more.</p>"
+        "<h3>BloodedVR // Extra Feed</h3>"
+        "<p>Animal Company, Roblox, Minecraft, VR games, updates, and more.</p>"
         "</div>"
     ),
     "custom_css": (
@@ -98,26 +89,52 @@ DEFAULT_CONTENT = {
     ),
 }
 
+DEFAULT_DATA = {
+    "active_username": "BloodedVR",
+    "profiles": {
+        "bloodedvr": DEFAULT_PROFILE,
+    },
+}
 
-def ensure_content_file():
-    if not CONTENT_FILE.exists():
-        CONTENT_FILE.write_text(json.dumps(DEFAULT_CONTENT, indent=2), encoding="utf-8")
+
+def ensure_profiles_file():
+    if not PROFILES_FILE.exists():
+        PROFILES_FILE.write_text(json.dumps(DEFAULT_DATA, indent=2), encoding="utf-8")
 
 
-def load_content():
-    ensure_content_file()
+def normalize_username(username):
+    return username.strip().lstrip("@").lower()
+
+
+def load_data():
+    ensure_profiles_file()
     try:
-        raw_content = json.loads(CONTENT_FILE.read_text(encoding="utf-8"))
-        merged = DEFAULT_CONTENT.copy()
-        merged.update(raw_content)
-        return merged
+        raw_data = json.loads(PROFILES_FILE.read_text(encoding="utf-8"))
     except json.JSONDecodeError:
-        CONTENT_FILE.write_text(json.dumps(DEFAULT_CONTENT, indent=2), encoding="utf-8")
-        return DEFAULT_CONTENT
+        PROFILES_FILE.write_text(json.dumps(DEFAULT_DATA, indent=2), encoding="utf-8")
+        return DEFAULT_DATA
+
+    profiles = {}
+    for key, profile in raw_data.get("profiles", {}).items():
+        merged = DEFAULT_PROFILE.copy()
+        merged.update(profile)
+        profiles[normalize_username(profile.get("username", key) or key)] = merged
+
+    if not profiles:
+        profiles = DEFAULT_DATA["profiles"].copy()
+
+    active_username = raw_data.get("active_username") or next(iter(profiles.values()))["username"]
+    return {"active_username": active_username, "profiles": profiles}
 
 
-def save_content(content):
-    CONTENT_FILE.write_text(json.dumps(content, indent=2), encoding="utf-8")
+def save_data(data):
+    PROFILES_FILE.write_text(json.dumps(data, indent=2), encoding="utf-8")
+
+
+def get_profile(username):
+    data = load_data()
+    profile = data["profiles"].get(normalize_username(username))
+    return data, profile
 
 
 def parse_lines(raw_text):
@@ -136,28 +153,6 @@ def parse_websites(raw_text):
         else:
             websites.append({"name": clean, "url": "#"})
     return websites
-
-
-def parse_named_links(raw_text):
-    items = []
-    for line in raw_text.splitlines():
-        clean = line.strip()
-        if not clean:
-            continue
-        if "|" in clean:
-            name, url = clean.split("|", 1)
-            items.append({"name": name.strip(), "url": url.strip()})
-        else:
-            items.append({"name": clean, "url": clean})
-    return items
-
-
-def named_links_to_text(items):
-    return "\n".join(
-        f"{item.get('name', '').strip()} | {item.get('url', '').strip()}"
-        for item in items
-        if item.get("name") or item.get("url")
-    )
 
 
 def parse_posts(raw_text):
@@ -188,8 +183,11 @@ def posts_to_text(posts):
     return "\n\n".join(chunk for chunk in chunks if chunk)
 
 
-def build_content_from_request(form):
+def build_profile_from_request(form, existing_profile=None):
+    existing_profile = existing_profile or DEFAULT_PROFILE
+    username = form.get("username", existing_profile.get("username", "BloodedVR")).strip().lstrip("@") or "BloodedVR"
     return {
+        "username": username,
         "hero_title": form.get("hero_title", "").strip(),
         "hero_tagline": form.get("hero_tagline", "").strip(),
         "status_badge": form.get("status_badge", "").strip(),
@@ -203,9 +201,6 @@ def build_content_from_request(form):
         "timeline": parse_lines(form.get("timeline", "")),
         "projects": parse_lines(form.get("projects", "")),
         "skills": parse_lines(form.get("skills", "")),
-        "featured_video": form.get("featured_video", "").strip(),
-        "video_gallery": parse_named_links(form.get("video_gallery", "")),
-        "image_gallery": parse_named_links(form.get("image_gallery", "")),
         "contact_email": form.get("contact_email", "").strip(),
         "contact_discord": form.get("contact_discord", "").strip(),
         "contact_location": form.get("contact_location", "").strip(),
@@ -217,23 +212,22 @@ def build_content_from_request(form):
     }
 
 
-def build_admin_context(content):
+def build_admin_context(profile):
     websites_text = "\n".join(
         f"{site.get('name', '').strip()} | {site.get('url', '').strip()}"
-        for site in content.get("websites", [])
+        for site in profile.get("websites", [])
     )
     return {
-        "content": content,
-        "games_text": "\n".join(content.get("games", [])),
+        "content": profile,
+        "games_text": "\n".join(profile.get("games", [])),
         "websites_text": websites_text,
-        "more_text": "\n".join(content.get("more", [])),
-        "announcements_text": "\n".join(content.get("announcements", [])),
-        "timeline_text": "\n".join(content.get("timeline", [])),
-        "projects_text": "\n".join(content.get("projects", [])),
-        "skills_text": "\n".join(content.get("skills", [])),
-        "posts_text": posts_to_text(content.get("posts", [])),
-        "video_gallery_text": named_links_to_text(content.get("video_gallery", [])),
-        "image_gallery_text": named_links_to_text(content.get("image_gallery", [])),
+        "more_text": "\n".join(profile.get("more", [])),
+        "announcements_text": "\n".join(profile.get("announcements", [])),
+        "timeline_text": "\n".join(profile.get("timeline", [])),
+        "projects_text": "\n".join(profile.get("projects", [])),
+        "skills_text": "\n".join(profile.get("skills", [])),
+        "posts_text": posts_to_text(profile.get("posts", [])),
+        "profile_url": f"/@{profile.get('username', 'BloodedVR')}",
     }
 
 
@@ -246,7 +240,26 @@ app.config["SESSION_COOKIE_SAMESITE"] = "Lax"
 
 @app.route("/")
 def home():
-    return render_template("home.html", content=load_content())
+    data = load_data()
+    return redirect(url_for("profile_page", username=data["active_username"]))
+
+
+@app.route("/@<username>")
+def profile_page(username):
+    _, profile = get_profile(username)
+    if not profile:
+        abort(404)
+    return render_template("home.html", content=profile)
+
+
+@app.route("/<username>")
+def profile_page_plain(username):
+    if username in {"admin", "static"}:
+        abort(404)
+    _, profile = get_profile(username)
+    if not profile:
+        abort(404)
+    return redirect(url_for("profile_page", username=profile["username"]))
 
 
 @app.route("/admin/login", methods=["GET", "POST"])
@@ -265,15 +278,23 @@ def admin_panel():
     if not session.get("admin_logged_in"):
         return redirect(url_for("admin_login"))
 
-    content = load_content()
+    data = load_data()
+    active_key = normalize_username(data["active_username"])
+    profile = data["profiles"].get(active_key, DEFAULT_PROFILE.copy())
 
     if request.method == "POST":
-        content = build_content_from_request(request.form)
-        save_content(content)
-        flash("Saved. Your site content has been updated.", "success")
+        updated_profile = build_profile_from_request(request.form, profile)
+        new_key = normalize_username(updated_profile["username"])
+        old_key = normalize_username(profile["username"])
+        if old_key in data["profiles"] and old_key != new_key:
+            del data["profiles"][old_key]
+        data["profiles"][new_key] = updated_profile
+        data["active_username"] = updated_profile["username"]
+        save_data(data)
+        flash("Saved. Your profile site has been updated.", "success")
         return redirect(url_for("admin_panel"))
 
-    return render_template("admin_panel.html", **build_admin_context(content))
+    return render_template("admin_panel.html", **build_admin_context(profile))
 
 
 @app.post("/admin/save")
@@ -281,9 +302,18 @@ def admin_save():
     if not session.get("admin_logged_in"):
         return jsonify({"ok": False, "error": "Unauthorized"}), 401
 
-    content = build_content_from_request(request.form)
-    save_content(content)
-    return jsonify({"ok": True, "message": "Live update saved."})
+    data = load_data()
+    active_key = normalize_username(data["active_username"])
+    profile = data["profiles"].get(active_key, DEFAULT_PROFILE.copy())
+    updated_profile = build_profile_from_request(request.form, profile)
+    new_key = normalize_username(updated_profile["username"])
+    old_key = normalize_username(profile["username"])
+    if old_key in data["profiles"] and old_key != new_key:
+        del data["profiles"][old_key]
+    data["profiles"][new_key] = updated_profile
+    data["active_username"] = updated_profile["username"]
+    save_data(data)
+    return jsonify({"ok": True, "message": "Live update saved.", "profile_url": f"/@{updated_profile['username']}"})
 
 
 @app.post("/admin/logout")

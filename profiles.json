@@ -1,0 +1,80 @@
+{
+  "active_username": "BloodedVR",
+  "profiles": {
+    "bloodedvr": {
+      "username": "BloodedVR",
+      "hero_title": "BloodedVR",
+      "hero_tagline": "A green-glow profile site for my games, projects, websites, and whatever I'm into.",
+      "status_badge": "ONLINE // BLOODEDVR // VR PLAYER",
+      "intro_note": "Usually playing Animal Company, testing a new idea, or making this site cooler.",
+      "about": "Hey, I'm BloodedVR. I like Animal Company, Roblox, Minecraft, VR games, and more. This is my own profile page where I can post updates, share my links, and show what I'm about.",
+      "games": [
+        "Animal Company",
+        "Roblox",
+        "Minecraft",
+        "VR Games",
+        "Multiplayer Games"
+      ],
+      "websites": [
+        {
+          "name": "Main Website",
+          "url": "https://example.com"
+        },
+        {
+          "name": "Projects",
+          "url": "https://example.com/projects"
+        },
+        {
+          "name": "Profile Link",
+          "url": "https://example.com/@BloodedVR"
+        }
+      ],
+      "more": [
+        "I like retro game menus and glowing terminal UI.",
+        "I enjoy making websites feel personal instead of generic.",
+        "This whole profile can be edited from the admin panel."
+      ],
+      "announcements": [
+        "The BloodedVR profile is live.",
+        "Username profile pages are now enabled."
+      ],
+      "posts": [
+        {
+          "title": "Welcome To My Page",
+          "meta": "Profile Update",
+          "body": "This is my own little corner of the internet with my games, websites, and updates."
+        },
+        {
+          "title": "What I Like",
+          "meta": "Gaming",
+          "body": "Animal Company, Roblox, Minecraft, VR games, and more fun stuff."
+        }
+      ],
+      "timeline": [
+        "Started making my own websites",
+        "Built a retro green profile page",
+        "Turned it into a username-based profile system"
+      ],
+      "projects": [
+        "BloodedVR profile page",
+        "Custom terminal-style UI",
+        "Multi-profile about-me site system"
+      ],
+      "skills": [
+        "HTML",
+        "CSS",
+        "Python",
+        "Creative UI ideas",
+        "VR gaming"
+      ],
+      "contact_email": "bloodedvr@example.com",
+      "contact_discord": "BloodedVR",
+      "contact_location": "Online",
+      "footer_note": "BloodedVR profile powered by Python and ready for Render.",
+      "primary_button_label": "OPEN MY LINKS",
+      "primary_button_url": "#links",
+      "custom_html": "<div class=\"custom-block\"><h3>BloodedVR // Extra Feed</h3><p>Animal Company, Roblox, Minecraft, VR games, updates, and more.</p></div>",
+      "custom_css": ".custom-block { border: 1px solid rgba(84, 255, 157, 0.28); padding: 18px; background: rgba(84, 255, 157, 0.05); }"
+    }
+  }
+}

@@ -6,8 +6,8 @@
     <div class="admin-topbar">
       <div>
         <div class="section-label">CONTROL PANEL</div>
-        <h1>Edit Site Content</h1>
-        <p class="admin-copy">20+ controls, live save, and preview reload for the real website.</p>
+        <h1>Build A Username Profile</h1>
+        <p class="admin-copy">Edit the active profile, set the username path, and update the site live.</p>
       </div>
       <form method="post" action="{{ url_for('admin_logout') }}">
         <button type="submit" class="ghost-button">LOG OUT</button>
@@ -23,67 +23,62 @@
     {% endwith %}
 
     <div class="action-bar">
+      <button type="button" class="action-button" data-target="username">Edit Username URL</button>
       <button type="button" class="action-button" data-target="hero_title">Update Site Content</button>
       <button type="button" class="action-button" data-target="announcements" data-mode="announce">Send Announcement</button>
       <button type="button" class="action-button" data-target="posts" data-mode="post">Make Post</button>
-      <button type="button" class="action-button" data-target="video_gallery" data-mode="video">Share Video</button>
-      <button type="button" class="action-button" data-target="image_gallery" data-mode="image">Share Image</button>
       <button type="button" class="action-button" data-target="custom_html">Edit Website HTML</button>
       <button type="button" class="action-button" id="refresh-preview">Refresh Preview</button>
     </div>
 
-    <div class="quick-panel">
+    <div class="quick-panel two-up">
+      <div class="quick-box">
+        <div class="section-label">PROFILE PATH</div>
+        <div class="path-preview">Live URL: <strong id="profile-path-label">{{ profile_url }}</strong></div>
+        <p class="field-help">Visitors can use `/<username>` or `/@<username>`, and the main site redirects to the active profile.</p>
+      </div>
       <div class="quick-box">
         <div class="section-label">QUICK ANNOUNCEMENT</div>
         <label for="quick_announcement">Write a fast broadcast</label>
         <input id="quick_announcement" type="text" placeholder="New update is live...">
         <button type="button" class="ghost-button quick-trigger" data-mode="announce">ADD TO ANNOUNCEMENTS</button>
       </div>
-      <div class="quick-box">
-        <div class="section-label">QUICK VIDEO</div>
-        <label for="quick_video">Format: Title | https://video-link</label>
-        <input id="quick_video" type="text" placeholder="Fresh clip | https://youtube.com/...">
-        <button type="button" class="ghost-button quick-trigger" data-mode="video">ADD TO VIDEO LIST</button>
-      </div>
-      <div class="quick-box">
-        <div class="section-label">QUICK IMAGE</div>
-        <label for="quick_image">Format: Title | https://image-link</label>
-        <input id="quick_image" type="text" placeholder="Setup photo | https://image...">
-        <button type="button" class="ghost-button quick-trigger" data-mode="image">ADD TO IMAGE LIST</button>
-      </div>
     </div>
 
     <div class="function-grid">
-      <div class="function-chip">1 Hero Title</div>
-      <div class="function-chip">2 Hero Tagline</div>
-      <div class="function-chip">3 Status Badge</div>
-      <div class="function-chip">4 Intro Note</div>
-      <div class="function-chip">5 About</div>
-      <div class="function-chip">6 Games</div>
-      <div class="function-chip">7 Websites</div>
-      <div class="function-chip">8 More Stuff</div>
-      <div class="function-chip">9 Announcements</div>
-      <div class="function-chip">10 Posts</div>
-      <div class="function-chip">11 Timeline</div>
-      <div class="function-chip">12 Projects</div>
-      <div class="function-chip">13 Skills</div>
-      <div class="function-chip">14 Featured Video</div>
-      <div class="function-chip">15 Video Gallery</div>
-      <div class="function-chip">16 Image Gallery</div>
-      <div class="function-chip">17 Email</div>
-      <div class="function-chip">18 Discord</div>
-      <div class="function-chip">19 Location</div>
-      <div class="function-chip">20 Footer Note</div>
-      <div class="function-chip">21 Button Label</div>
-      <div class="function-chip">22 Button URL</div>
-      <div class="function-chip">23 Custom HTML/CSS</div>
+      <div class="function-chip">1 Username URL</div>
+      <div class="function-chip">2 Hero Title</div>
+      <div class="function-chip">3 Hero Tagline</div>
+      <div class="function-chip">4 Status Badge</div>
+      <div class="function-chip">5 Intro Note</div>
+      <div class="function-chip">6 About</div>
+      <div class="function-chip">7 Games</div>
+      <div class="function-chip">8 Websites</div>
+      <div class="function-chip">9 More Stuff</div>
+      <div class="function-chip">10 Announcements</div>
+      <div class="function-chip">11 Posts</div>
+      <div class="function-chip">12 Timeline</div>
+      <div class="function-chip">13 Projects</div>
+      <div class="function-chip">14 Skills</div>
+      <div class="function-chip">15 Email</div>
+      <div class="function-chip">16 Discord</div>
+      <div class="function-chip">17 Location</div>
+      <div class="function-chip">18 Footer Note</div>
+      <div class="function-chip">19 Button Label</div>
+      <div class="function-chip">20 Button URL</div>
+      <div class="function-chip">21 Custom HTML/CSS</div>
     </div>
 
     <div class="admin-dashboard">
       <form method="post" class="admin-form grid-form" id="editor-form">
         <div class="form-columns">
           <section class="editor-section">
-            <div class="section-label">CORE</div>
+            <div class="section-label">PROFILE CORE</div>
+
+            <label for="username">Username
+              <span class="field-help">This becomes `/@Username`</span>
+            </label>
+            <input id="username" name="username" value="{{ content.username }}" required>
 
             <label for="hero_title">Hero title</label>
             <input id="hero_title" name="hero_title" value="{{ content.hero_title }}" required>
@@ -119,6 +114,10 @@
               <span class="field-help">One per line</span>
             </label>
             <textarea id="announcements" name="announcements" rows="5">{{ announcements_text }}</textarea>
+          </section>
+
+          <section class="editor-section">
+            <div class="section-label">PROFILE DETAILS</div>
 
             <label for="posts">Posts
               <span class="field-help">Format: title, next line meta, next lines body, blank line between posts</span>
@@ -129,10 +128,6 @@
               <span class="field-help">One per line</span>
             </label>
             <textarea id="timeline" name="timeline" rows="5">{{ timeline_text }}</textarea>
-          </section>
-
-          <section class="editor-section">
-            <div class="section-label">SITE TOOLS</div>
 
             <label for="projects">Projects
               <span class="field-help">One per line</span>
@@ -143,19 +138,6 @@
               <span class="field-help">One per line</span>
             </label>
             <textarea id="skills" name="skills" rows="5">{{ skills_text }}</textarea>
-
-            <label for="featured_video">Featured video URL</label>
-            <input id="featured_video" name="featured_video" value="{{ content.featured_video }}">
-
-            <label for="video_gallery">Video gallery
-              <span class="field-help">Use: Title | https://video-link</span>
-            </label>
-            <textarea id="video_gallery" name="video_gallery" rows="6">{{ video_gallery_text }}</textarea>
-
-            <label for="image_gallery">Image gallery
-              <span class="field-help">Use: Title | https://image-link</span>
-            </label>
-            <textarea id="image_gallery" name="image_gallery" rows="6">{{ image_gallery_text }}</textarea>
 
             <label for="contact_email">Contact email</label>
             <input id="contact_email" name="contact_email" value="{{ content.contact_email }}">
@@ -178,12 +160,12 @@
             <label for="custom_html">Custom HTML
               <span class="field-help">Rendered directly onto the homepage</span>
             </label>
-            <textarea id="custom_html" name="custom_html" rows="10">{{ content.custom_html }}</textarea>
+            <textarea id="custom_html" name="custom_html" rows="7">{{ content.custom_html }}</textarea>
 
             <label for="custom_css">Custom CSS
               <span class="field-help">Injected into the real site on save</span>
             </label>
-            <textarea id="custom_css" name="custom_css" rows="10">{{ content.custom_css }}</textarea>
+            <textarea id="custom_css" name="custom_css" rows="7">{{ content.custom_css }}</textarea>
           </section>
         </div>
 
@@ -195,8 +177,8 @@
 
       <aside class="preview-panel">
         <div class="section-label">LIVE PREVIEW</div>
-        <p class="field-help">The preview reloads after each save so you can see the actual website update.</p>
-        <iframe src="{{ url_for('home') }}" title="Live website preview" id="live-preview"></iframe>
+        <p class="field-help">The preview reloads after each save so you can see the active profile update.</p>
+        <iframe src="{{ profile_url }}" title="Live website preview" id="live-preview"></iframe>
       </aside>
     </div>
   </section>
@@ -206,10 +188,14 @@
   const saveStatus = document.getElementById("save-status");
   const previewFrame = document.getElementById("live-preview");
   const announcementsField = document.getElementById("announcements");
-  const postsField = document.getElementById("posts");
-  const videoField = document.getElementById("video_gallery");
-  const imageField = document.getElementById("image_gallery");
+  const usernameField = document.getElementById("username");
+  const pathLabel = document.getElementById("profile-path-label");
   let saveTimer;
+
+  function syncPathPreview() {
+    const value = (usernameField.value || "BloodedVR").replace(/^@+/, "").trim() || "BloodedVR";
+    pathLabel.textContent = "/@" + value;
+  }
 
   async function saveLive() {
     saveStatus.textContent = "Saving live update...";
@@ -223,8 +209,10 @@
       return;
     }
 
+    const result = await response.json();
     saveStatus.textContent = "Saved live. Preview refreshed.";
-    previewFrame.src = "{{ url_for('home') }}?t=" + Date.now();
+    pathLabel.textContent = result.profile_url;
+    previewFrame.src = result.profile_url + "?t=" + Date.now();
   }
 
   function prependLine(field, value) {
@@ -235,15 +223,8 @@
     field.dispatchEvent(new Event("input", { bubbles: true }));
   }
 
-  function prependBlock(field, value) {
-    if (!value.trim()) return;
-    field.value = field.value.trim()
-      ? value.trim() + "\n\n" + field.value.trim()
-      : value.trim();
-    field.dispatchEvent(new Event("input", { bubbles: true }));
-  }
-
   editorForm.addEventListener("input", () => {
+    syncPathPreview();
     saveStatus.textContent = "Changes detected. Auto-save in 1 second...";
     clearTimeout(saveTimer);
     saveTimer = setTimeout(saveLive, 1000);
@@ -265,16 +246,6 @@
         return;
       }
 
-      if (mode === "video") {
-        document.getElementById("quick_video").focus();
-        return;
-      }
-
-      if (mode === "image") {
-        document.getElementById("quick_image").focus();
-        return;
-      }
-
       const target = document.getElementById(targetId);
       if (target) {
         target.scrollIntoView({ behavior: "smooth", block: "center" });
@@ -284,31 +255,18 @@
   });
 
   document.getElementById("refresh-preview").addEventListener("click", () => {
-    previewFrame.src = "{{ url_for('home') }}?t=" + Date.now();
+    const value = (usernameField.value || "BloodedVR").replace(/^@+/, "").trim() || "BloodedVR";
+    previewFrame.src = "/@" + value + "?t=" + Date.now();
   });
 
   document.querySelectorAll(".quick-trigger").forEach((button) => {
     button.addEventListener("click", () => {
-      const mode = button.dataset.mode;
-
-      if (mode === "announce") {
-        const value = document.getElementById("quick_announcement").value;
-        prependLine(announcementsField, value);
-        document.getElementById("quick_announcement").value = "";
-      }
-
-      if (mode === "video") {
-        const value = document.getElementById("quick_video").value;
-        prependLine(videoField, value);
-        document.getElementById("quick_video").value = "";
-      }
-
-      if (mode === "image") {
-        const value = document.getElementById("quick_image").value;
-        prependLine(imageField, value);
-        document.getElementById("quick_image").value = "";
-      }
+      const value = document.getElementById("quick_announcement").value;
+      prependLine(announcementsField, value);
+      document.getElementById("quick_announcement").value = "";
     });
   });
+
+  syncPathPreview();
 </script>
 {% endblock %}
